@@ -78,10 +78,10 @@ def add_common_args(parser):
                         default='./hateful_memes/train.jsonl')
     parser.add_argument('--dev_eval_file',
                         type=str,
-                        default='./hateful_memes/dev.jsonl')
+                        default='./hateful_memes/dev_seen.jsonl')
     parser.add_argument('--test_eval_file',
                         type=str,
-                        default='./hateful_memes/test.jsonl')
+                        default='./hateful_memes/test_seen.jsonl')
     parser.add_argument('--img_folder_rel_path',
                         type=str,
                         default='./hateful_memes/')

@@ -21,6 +21,7 @@ import ujson as json
 from collections import Counter
 
 import fasttext as ft
+import sister
 import torchvision
 from torchvision.transforms import ToTensor, Resize, Normalize
 
@@ -40,7 +41,7 @@ class HatefulMemes(data.Dataset):
         # pretrained transformers to get embeddings and image tensors
         self.image_transform = torchvision.models.googlenet(pretrained=True)
         
-        self.text_model = ft.load_model(text_model_path)
+        self.text_model = sister.MeanEmbedding(lang="en")
 
 
 
@@ -59,7 +60,7 @@ class HatefulMemes(data.Dataset):
         
 
         # text
-        text = self.text_model.get_sentence_vector(self.data.loc[index, 'text'])
+        text = self.text_model(self.data.loc[index, 'text'])
         text = torch.Tensor(text).squeeze()
         
         # label (test set has labels for our project since challenge closed)
