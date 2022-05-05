@@ -35,7 +35,7 @@ def main(args):
     log.info(f'Seed: {args.seed}')
     random.seed(args.seed)
     np.random.seed(args.seed)
-    torch.manual_seed(arg.seed)
+    torch.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed)
 
     # Get Model
