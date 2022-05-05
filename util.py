@@ -20,7 +20,7 @@ import ujson as json
 
 from collections import Counter
 
-import fastText as ft
+import fasttext as ft
 import torchvision
 from torchvision.transforms import ToTensor, Resize, Normalize
 
