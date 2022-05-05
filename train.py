@@ -13,6 +13,7 @@ import torch.utils.data as data
 import util
 
 from args import get_train_args
+from models import Baseline_model
 from collections import OrderedDict
 from tensorboardX import SummaryWriter
 from tqdm import tqdm
@@ -41,7 +42,7 @@ def main(args):
     # Get Model
     log.info("Making model....")
     if(args.model_type == "baseline"):
-        model = baseline_model()
+        model = Baseline_model(hidden_size=args.hidden_size)
     else:
         raise Exception("Model provided not valid")
 
