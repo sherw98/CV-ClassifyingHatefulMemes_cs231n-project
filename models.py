@@ -36,7 +36,9 @@ class Baseline_model(nn.Module):
         # concat 
         image = flatten(F.relu(image))
         text = flatten(F.relu(text))
-        combined_feat = torch.cat([image, text], dim = 1))
+        print("Image shape: {}".format(image.shape))
+        print("text shape: {}".format(text.shape))
+        combined_feat = torch.cat((image, text), dim = 1)
 
         # forward through linear layers
         fc1_out = self.fc1(combined_feat)
