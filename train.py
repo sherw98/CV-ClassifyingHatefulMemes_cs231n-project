@@ -14,6 +14,7 @@ import util
 
 from args import get_train_args
 from models import Baseline_model
+from util import HatefulMemes
 from collections import OrderedDict
 from tensorboardX import SummaryWriter
 from tqdm import tqdm
