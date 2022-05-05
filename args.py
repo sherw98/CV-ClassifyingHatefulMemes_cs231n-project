@@ -54,7 +54,7 @@ def get_train_args():
     parser.add_argument('--model_type',
                         type=str,
                         default = "baseline",
-                        choices=('baseline', 'bidaf_char', 'QANet'),
+                        choices=('baseline'),
                         help='Model choice for training')
 
     args = parser.parse_args()
@@ -75,16 +75,16 @@ def add_common_args(parser):
     """Add arguments common to all 3 scripts: setup.py, train.py, test.py"""
     parser.add_argument('--train_eval_file',
                         type=str,
-                        default='./train.jsonl')
+                        default='./hateful_memes/train.jsonl')
     parser.add_argument('--dev_eval_file',
                         type=str,
-                        default='./dev.jsonl')
+                        default='./hateful_memes/dev.jsonl')
     parser.add_argument('--test_eval_file',
                         type=str,
-                        default='./test.jsonl')
+                        default='./hateful_memes/test.jsonl')
     parser.add_argument('--img_folder_rel_path',
                         type=str,
-                        default='./')
+                        default='./hateful_memes/')
     parser.add_argument('--text_model_path',
                         type=str)    
 
