@@ -32,8 +32,8 @@ def get_train_args():
                         help='Probability of zeroing an activation in dropout layers.')
     parser.add_argument('--metric_name',
                         type=str,
-                        default='F1',
-                        choices=('NLL', 'EM', 'F1'),
+                        default='NLL',
+                        choices=('NLL', 'acc', 'AUROC'),
                         help='Name of dev metric to determine best checkpoint.')
     parser.add_argument('--max_checkpoints',
                         type=int,

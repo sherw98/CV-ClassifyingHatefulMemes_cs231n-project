@@ -1,0 +1,21 @@
+name: cs231n_proj
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.6.8
+  - fasttext
+  - ujson
+  - numpy
+  - pandas
+  - pip
+  - spacy=2.0.16
+  - tensorboard
+  - tensorflow
+  - tensorboardX
+  - tqdm
+  - torchvision
+  - urllib3
+  - pip:
+    - torch==1.7.1

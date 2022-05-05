@@ -75,7 +75,142 @@ def main(args):
 
     # load in data
     log.info("Building dataset....")
-    train_dataset = HatefulMemes()
+    train_dataset = HatefulMemes(args.train_eval_file,
+                                 args.img_folder_rel_path,
+                                 args.text_model_path)
+    ###############
+    ################## might need to modify collate fn to allow for padding of text data
+    ###############
+    train_loader = data.DataLoader(train_dataset,
+                                   batch_size = args.batch_size,
+                                   shuffle = True,
+                                   num_workers = args.num_workers)
+    dev_dataset = HatefulMemes(args.dev_eval_file,
+                                args.img_folder_rel_path,
+                                args.text_model_path)                             
+    dev_loader = data.DataLoader(dev_dataset,
+                                   batch_size = args.batch_size,
+                                   shuffle = True,
+                                   num_workers = args.num_workers)
+    # Start training
+    log.info("Training...")
+    steps_till_eval = args.eval_steps
+    epoch = step // len(train_dataset)
+    while epoch != args.num_epochs:
+        epoch += 1
+        log.info(f'Starting epoch {epoch}....')
+        with torch.enable_grad(), \
+            tqdm(total=len(train_loader.dataset)) as progress_bar:
+            for img_id, image, text, label in train_loader:
+                # forward pass here
+                image = image.to(device)
+                text = text.to(device)
 
+                batch_size = args.batch_size
+                optimizer.zero_grad()
+
+                if(args.model_type == "baseline"):
+                    softmax_score = model(image, text)
+                else:
+                    raise Exception("Model Type Invalid")
+
+                # calc loss
+                label = label.to(device)
+                loss = F.cross_entropy(softmax_score, label)
+                loss_val = loss.item()
+
+                # backward pass here
+                loss.backward()
+                nn.utils.clip_grad_norm(model.parameters(), args.max_grad_norm)
+                optimizer.step()
+                scheduler.step(step//batch_size)
+
+                # log info
+                step += batch_size
+                progress_bar.update(batch_size)
+                progress_bar.set_postfix(epoch = epoch,
+                                         loss = loss_val)
+                tbx.add_scalar("train/loss", loss_val, step)
+                tbx.add_scalar("train/LR", optimizer.param_groups[0]['lr'],
+                               step)
+                steps_till_eval -= batch_size
+                if steps_till_eval <= 0:
+                    steps_till_eval = args.eval_steps
+
+                    # Eval and save checkpoint
+                    log.info(f'Evaluating at step {step}...')
+                    results, pred_dict = evaluate(args, model, dev_loader, device)
+                    saver.save(step, model, results[args.metric_name], device)
+
+                    results_str = ", ".join(f'{k}: {v:05.2f}' for k, v in results.items())
+                    log.info(f'Dev {results_str}')
+
+                    # tensorboard
+                    log.info("Visualizing in TensorBoard")
+                    for k, v in results.items():
+                        tbx.add_scalar(f'dev/{k}', v, step)
+                    
+def evaluate(args, model, data_loader, device):
+    nll_meter = util.AverageMeter()
+
+    model.eval()
+    pred_dict = {} # id, prob and prediction
+
+
+    acc = 0
+    num_correct, num_samples = 0, 0
+    
+    with torch.no_grad(), \
+        tqdm(total=len(data_loader.dataset)) as progress_bar:
+        for img_id, image, text, label in data_loader:
+            # forward pass here
+            image = image.to(device)
+            text = text.to(device)
+
+            batch_size = args.batch_size
+            optimizer.zero_grad()
+
+            if(args.model_type == "baseline"):
+                softmax_score = model(image, text)
+            else:
+                raise Exception("Model Type Invalid")
+
+            # calc loss
+            label = label.to(device)
+            loss = F.cross_entropy(softmax_score, label)
+            nll_meter.update(loss.item(), batch_size)
+
+            # get acc and auroc
+            _, preds = softmax_score.max(1)
+            num_correct += (preds == label).sum()
+            num_samples += preds.size(0)
+
+            pred_dict_update = util.make_update_dict(
+                img_id,
+                preds,
+                softmax_score,
+                label
+            )
+
+            # update 
+            pred_dict.update(pred_dict_update)
+
+        acc = float(num_correct) / num_samples
+    model.train()
+
+    results_list = [("Loss", nll_meter.avg)
+                    ("Acc", acc)]
+    results = OrderedDict(results_list)
+    
+    return results, pred_dict
+
+
+
+
+    
+
+
+
+    
 if __name__ == '__main__':
     main(get_train_args())

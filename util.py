@@ -22,7 +22,7 @@ from collections import Counter
 
 import fastText as ft
 import torchvision
-
+from torchvision.transforms import ToTensor, Resize, Normalize
 class HatefulMemes(data.Dataset):
     """
     preprocess image and text data to multimodal tensors
@@ -31,14 +31,13 @@ class HatefulMemes(data.Dataset):
         self,
         json_path,
         img_folder_dir,
-        image_transform,
         text_model_path
     ):
         self.data = pd.read_json(json_path, lines = True)
         self.data['img'] = img_folder_dir +  self.data['img']
 
         # pretrained transformers to get embeddings and image tensors
-        self.image_transform = image_transform
+        self.image_transform = torchvision.models.googlenet(pretrained=True)
         
         self.text_model = ft.load_model(text_model_path)
 
@@ -51,9 +50,12 @@ class HatefulMemes(data.Dataset):
         
         # get image
         image = Image.open(self.data.loc[index, "img"]).convert("RGB")
-
-        # fit image through a pretrained model
+        image = image.Resize((224,224)).ToTensor().Normalize(
+            mean=[0.485, 0.456, 0.406],
+            std=[0.229, 0.224, 0.225]
+        )
         
+
         # text
         text = self.text_model.get_sentence_vector(self.data.loc[index, 'text'])
         text = torch.Tensor(text).squeeze()
@@ -76,7 +78,32 @@ class HatefulMemes(data.Dataset):
         return len(self.data)
 
 
+class AverageMeter:
+    """Keep track of average values over time.
 
+    Adapted from:
+        > https://github.com/pytorch/examples/blob/master/imagenet/main.py
+    """
+    def __init__(self):
+        self.avg = 0
+        self.sum = 0
+        self.count = 0
+
+    def reset(self):
+        """Reset meter."""
+        self.__init__()
+
+    def update(self, val, num_samples=1):
+        """Update meter with new value `val`, the average of `num` samples.
+
+        Args:
+            val (float): Average value to update the meter with.
+            num_samples (int): Number of samples that were averaged to
+                produce `val`.
+        """
+        self.count += num_samples
+        self.sum += val * num_samples
+        self.avg = self.sum / self.count
 
 class CheckpointSaver:
     """Class to save and load model checkpoints.
@@ -175,6 +202,14 @@ class CheckpointSaver:
             except OSError:
                 # Avoid crashing if checkpoint has been removed or protected
                 pass
+
+def make_update_dict(img_ids, preds, scores, labels):
+    pred_dict = {}
+
+    for img_id, pred, score, label in zip(img_ids, preds, scores, labels):
+        pred_dict[img_id] = (score, pred, label)
+
+    return pred_dict
 
 
 def get_save_dir(base_dir, name, training, id_max=100):
