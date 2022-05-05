@@ -58,7 +58,7 @@ def main(args):
     # send model to dev and start training
     model = model.to(device)
     model.train()
-    ema = util.EMA
+    ema = util.EMA(model, args.ema_decay)
 
     # Get checkpoint saver
     saver = util.CheckpointSaver(args.save_dir,
@@ -125,6 +125,7 @@ def main(args):
                 nn.utils.clip_grad_norm(model.parameters(), args.max_grad_norm)
                 optimizer.step()
                 scheduler.step(step//batch_size)
+                ema(model, step//batch_size)
 
                 # log info
                 step += batch_size
@@ -140,9 +141,11 @@ def main(args):
 
                     # Eval and save checkpoint
                     log.info(f'Evaluating at step {step}...')
+                    ema.assign(model)
                     results, pred_dict = evaluate(args, model, dev_loader, device)
                     saver.save(step, model, results[args.metric_name], device)
-
+                    ema.resume(model)
+                    
                     results_str = ", ".join(f'{k}: {v:05.2f}' for k, v in results.items())
                     log.info(f'Dev {results_str}')
 
