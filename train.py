@@ -110,13 +110,13 @@ def main(args):
                 optimizer.zero_grad()
 
                 if(args.model_type == "baseline"):
-                    softmax_score = model(image, text)
+                    log_softmax_score = model(image, text)
                 else:
                     raise Exception("Model Type Invalid")
 
                 # calc loss
                 label = label.to(device)
-                loss = F.cross_entropy(softmax_score, label)
+                loss = F.nll_loss(log_softmax_score, label)
                 loss_val = loss.item()
 
                 # backward pass here
@@ -171,16 +171,17 @@ def evaluate(args, model, data_loader, device):
             optimizer.zero_grad()
 
             if(args.model_type == "baseline"):
-                softmax_score = model(image, text)
+                log_softmax_score = model(image, text)
             else:
                 raise Exception("Model Type Invalid")
 
             # calc loss
             label = label.to(device)
-            loss = F.cross_entropy(softmax_score, label)
+            loss = F.nll_loss(log_softmax_score, label)
             nll_meter.update(loss.item(), batch_size)
 
             # get acc and auroc
+            softmax_score = log_softmax_score.exp()
             _, preds = softmax_score.max(1)
             num_correct += (preds == label).sum()
             num_samples += preds.size(0)

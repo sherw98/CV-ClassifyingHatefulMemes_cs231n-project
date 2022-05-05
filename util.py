@@ -23,6 +23,7 @@ from collections import Counter
 import fastText as ft
 import torchvision
 from torchvision.transforms import ToTensor, Resize, Normalize
+
 class HatefulMemes(data.Dataset):
     """
     preprocess image and text data to multimodal tensors
@@ -54,6 +55,7 @@ class HatefulMemes(data.Dataset):
             mean=[0.485, 0.456, 0.406],
             std=[0.229, 0.224, 0.225]
         )
+        image = self.image_transform(image)
         
 
         # text
