@@ -23,7 +23,7 @@ class Baseline_model(nn.Module):
     def __init__(self, hidden_size, drop_prob = 0.1):
         super(Baseline_model, self).__init__()
         
-        self.vision_pretrain = torchvision.models.googlenet(pretrained=True)
+        self.vision_pretrain = torchvision.models.resnet152(pretrained=True)
 
         self.fc1 = nn.Linear(1300, hidden_size)
         self.relu = nn.ReLU()
