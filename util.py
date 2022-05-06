@@ -22,7 +22,6 @@ from collections import Counter
 
 import fasttext as ft
 import sister
-import torchvision
 from torchvision.transforms import ToTensor, Resize, Normalize
 
 class HatefulMemes(data.Dataset):
@@ -38,9 +37,7 @@ class HatefulMemes(data.Dataset):
         self.data = pd.read_json(json_path, lines = True)
         self.data['img'] = img_folder_dir +  self.data['img']
 
-        # pretrained transformers to get embeddings and image tensors
-        self.image_transform = torchvision.models.googlenet(pretrained=True)
-        
+        # pretrained transformers to get text embeddings
         self.text_model = sister.MeanEmbedding(lang="en")
 
 
@@ -65,8 +62,7 @@ class HatefulMemes(data.Dataset):
                 ),
             ]
         )
-        print(std_image(image))
-        image = self.image_transform(std_image(image))
+        image = std_image(image)
         
 
         # text
