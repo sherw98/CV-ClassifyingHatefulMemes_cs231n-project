@@ -22,7 +22,7 @@ from collections import Counter
 
 import fasttext as ft
 import sister
-from torchvision.transforms import ToTensor, Resize, Normalize
+from torchvision.transforms import Compose, ToTensor, Resize, Normalize
 
 class HatefulMemes(data.Dataset):
     """
@@ -50,13 +50,13 @@ class HatefulMemes(data.Dataset):
         # get image
         image = Image.open(self.data.loc[index, "img"]).convert("RGB")
         
-        std_image = torchvision.transforms.Compose(
+        std_image = Compose(
             [
-                torchvision.transforms.Resize(
+                Resize(
                     size=(224, 224)
                 ),        
-                torchvision.transforms.ToTensor(),
-                torchvision.transforms.Normalize(
+                ToTensor(),
+                Normalize(
                     mean=(0.485, 0.456, 0.406), 
                     std=(0.229, 0.224, 0.225)
                 ),
