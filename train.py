@@ -203,7 +203,7 @@ def evaluate(args, model, data_loader, device):
         acc = float(num_correct) / num_samples
     model.train()
 
-    results_list = [("Loss", nll_meter.avg),
+    results_list = [("NLL", nll_meter.avg),
                     ("Acc", acc)]
     results = OrderedDict(results_list)
     
