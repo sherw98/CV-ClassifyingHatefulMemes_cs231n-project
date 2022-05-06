@@ -24,18 +24,18 @@ class Baseline_model(nn.Module):
         super(Baseline_model, self).__init__()
         
         self.vision_pretrain = torchvision.models.googlenet(pretrained=True)
-        
+
         self.fc1 = nn.Linear(1000, hidden_size)
         self.relu = nn.ReLU()
         self.fc2 = nn.Linear(hidden_size, 2)
         self.dropout = nn.Dropout(drop_prob)
 
 
-    def flatten(x):
+    def flatten(self, x):
         N = x.shape[0] # read in N, C, H, W
         return x.view(N, -1)  # "flatten" the C * H * W values into a single vector per image
 
-    def forward(image, text):
+    def forward(self, image, text):
 
         # concat 
         print("Image shape: {}".format(image.shape))
