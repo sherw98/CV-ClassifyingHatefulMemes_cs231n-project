@@ -25,7 +25,7 @@ class Baseline_model(nn.Module):
         
         self.vision_pretrain = torchvision.models.googlenet(pretrained=True)
 
-        self.fc1 = nn.Linear(1000, hidden_size)
+        self.fc1 = nn.Linear(1300, hidden_size)
         self.relu = nn.ReLU()
         self.fc2 = nn.Linear(hidden_size, 2)
         self.dropout = nn.Dropout(drop_prob)
@@ -42,8 +42,6 @@ class Baseline_model(nn.Module):
 
         image = self.flatten(F.relu(image))
         text = self.flatten(F.relu(text))
-        print("Image Flatten shape: {}".format(image.shape))
-        print("text Flatten shape: {}".format(text.shape))
         combined_feat = torch.cat((image, text), dim = 1)
 
         # forward through linear layers
