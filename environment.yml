@@ -10,6 +10,7 @@ dependencies:
   - numpy
   - pandas
   - pip
+  - sister
   - spacy=2.0.16
   - tensorboard
   - tensorflow
