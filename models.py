@@ -5,7 +5,7 @@ Models class
 
 import torch
 import torch.nn as nn
-import torch.nn.functional as f
+import torch.nn.functional as F
 import torchvision
 
 class Baseline_model(nn.Module):
