@@ -143,7 +143,10 @@ def main(args):
                     # Eval and save checkpoint
                     log.info(f'Evaluating at step {step}...')
                     ema.assign(model)
-                    results, pred_dict = evaluate(args, model, dev_loader, device)
+                    results, pred_dict = evaluate(args, 
+                                                  model, 
+                                                  dev_loader, 
+                                                  device)
                     saver.save(step, model, results[args.metric_name], device)
                     ema.resume(model)
                     
