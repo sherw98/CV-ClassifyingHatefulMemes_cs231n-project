@@ -123,7 +123,7 @@ def main(args):
 
                 # backward pass here
                 loss.backward()
-                nn.utils.clip_grad_norm(model.parameters(), args.max_grad_norm)
+                nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
                 optimizer.step()
                 scheduler.step(step//batch_size)
                 ema(model, step//batch_size)
@@ -173,7 +173,6 @@ def evaluate(args, model, data_loader, device):
             text = text.to(device)
 
             batch_size = args.batch_size
-            optimizer.zero_grad()
 
             if(args.model_type == "baseline"):
                 log_softmax_score = model(image, text)
