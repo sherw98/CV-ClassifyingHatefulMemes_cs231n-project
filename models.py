@@ -38,11 +38,10 @@ class Baseline_model(nn.Module):
     def forward(self, image, text):
 
         # concat 
-        print("Image shape: {}".format(image.shape))
         image = self.vision_pretrain(image)
 
-        image = flatten(F.relu(image))
-        text = flatten(F.relu(text))
+        image = self.flatten(F.relu(image))
+        text = self.flatten(F.relu(text))
         print("Image Flatten shape: {}".format(image.shape))
         print("text Flatten shape: {}".format(text.shape))
         combined_feat = torch.cat((image, text), dim = 1)
