@@ -52,6 +52,7 @@ class HatefulMemes(data.Dataset):
         
         # get image
         image = Image.open(self.data.loc[index, "img"]).convert("RGB")
+        print(image.shape)
         std_image = torchvision.transforms.Compose(
             [
                 torchvision.transforms.Resize(
