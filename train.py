@@ -213,7 +213,7 @@ def evaluate(args, model, data_loader, device):
 
         # ROC
         y_score = np.asarray(full_score)
-        y = np.asarray(full_labels)
+        y = np.asarray(full_labels).astype(int)
 
         auc = metrics.roc_auc_score(y, y_score)
 
