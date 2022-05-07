@@ -16,6 +16,7 @@ from args import get_train_args
 from models import Baseline_model
 from util import HatefulMemes
 from collections import OrderedDict
+from sklearn import metrics
 from tensorboardX import SummaryWriter
 from tqdm import tqdm
 from ujson import load as json_load
@@ -163,6 +164,8 @@ def evaluate(args, model, data_loader, device):
 
     model.eval()
     pred_dict = {} # id, prob and prediction
+    full_score = []
+    full_labels = []
 
 
     acc = 0
@@ -200,14 +203,25 @@ def evaluate(args, model, data_loader, device):
                 label
             )
 
+            full_score.append(softmax_score[:,1].item())
+            full_labels.append(label)
+
             # update 
             pred_dict.update(pred_dict_update)
 
         acc = float(num_correct) / num_samples
+
+        # ROC
+        y_score = np.asarray(full_score)
+        y = np.asarray(full_labels)
+
+        auc = metrics.roc_auc_score(y, y_score)
+
     model.train()
 
     results_list = [("NLL", nll_meter.avg),
-                    ("Acc", acc)]
+                    ("Acc", acc), 
+                    ("AUROC", auc)]
     results = OrderedDict(results_list)
     
     return results, pred_dict
