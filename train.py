@@ -203,8 +203,8 @@ def evaluate(args, model, data_loader, device):
                 label
             )
 
-            full_score.append(softmax_score[:,1].item())
-            full_labels.append(label)
+            full_score.extend(softmax_score[:,1].tolist())
+            full_labels.extend(label)
 
             # update 
             pred_dict.update(pred_dict_update)
