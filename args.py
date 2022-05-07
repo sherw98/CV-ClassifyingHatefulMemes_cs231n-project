@@ -111,7 +111,7 @@ def add_train_test_args(parser):
                               multiple GPUs are available.')
     parser.add_argument('--hidden_size',
                         type=int,
-                        default=500,
+                        default=1000,
                         help='Number of features in encoder hidden layers.')
     parser.add_argument('--load_path',
                         type=str,
