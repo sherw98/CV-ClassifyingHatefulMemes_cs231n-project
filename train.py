@@ -108,13 +108,13 @@ def main(args):
             for img_id, image, text, label in train_loader:
                 # forward pass here
                 image = image.to(device)
-                text = text.to(device)
+                # text = text.to(device)
 
                 batch_size = args.batch_size
                 optimizer.zero_grad()
 
                 if(args.model_type == "baseline"):
-                    log_softmax_score = model(image, text)
+                    log_softmax_score = model(image, text, device)
                 else:
                     raise Exception("Model Type Invalid")
 
@@ -177,12 +177,12 @@ def evaluate(args, model, data_loader, device):
         for img_id, image, text, label in data_loader:
             # forward pass here
             image = image.to(device)
-            text = text.to(device)
+            # text = text.to(device)
 
             batch_size = args.batch_size
 
             if(args.model_type == "baseline"):
-                log_softmax_score = model(image, text)
+                log_softmax_score = model(image, text, device)
             else:
                 raise Exception("Model Type Invalid")
 
