@@ -3,7 +3,7 @@ Models class
 
 """
 
-import sister
+from sentence_transformers import SentenceTransformer, util
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -28,9 +28,9 @@ class Baseline_model(nn.Module):
         self.vision_pretrain = torchvision.models.resnet152(pretrained=True)
 
         # pretrained transformers to get text embeddings
-        self.text_model = sister.MeanEmbedding(lang="en")
+        self.text_model = SentenceTransformer("all-mpnet-base-v2")
 
-        self.fc1 = nn.Linear(1300, hidden_size)
+        self.fc1 = nn.Linear(1768, hidden_size)
         self.relu = nn.ReLU()
         self.fc2 = nn.Linear(hidden_size, 2)
         self.dropout = nn.Dropout(drop_prob)
@@ -44,7 +44,7 @@ class Baseline_model(nn.Module):
         print(text)
         # concat 
         image = self.vision_pretrain(image)
-        text = self.text_model(text).squeeze().to(device)
+        text = torch.tensor(self.text_model.encode(text)).squeeze().to(device)
 
         image = self.flatten(F.relu(image))
         text = self.flatten(F.relu(text))
