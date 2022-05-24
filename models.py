@@ -41,7 +41,7 @@ class Baseline_model(nn.Module):
         return x.view(N, -1)  # "flatten" the C * H * W values into a single vector per image
 
     def forward(self, image, text, device):
-
+        print(text)
         # concat 
         image = self.vision_pretrain(image)
         text = self.text_model(text).squeeze().to(device)
