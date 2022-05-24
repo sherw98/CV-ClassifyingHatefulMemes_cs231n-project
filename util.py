@@ -62,7 +62,7 @@ class HatefulMemes(data.Dataset):
         
 
         # text
-        text = self.data.loc[index, 'text'])
+        text = self.data.loc[index, 'text']
         
         # label (test set has labels for our project since challenge closed)
         label = self.data.loc[index, "label"]
