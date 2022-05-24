@@ -21,7 +21,6 @@ import ujson as json
 from collections import Counter
 
 import fasttext as ft
-import sister
 from torchvision.transforms import Compose, ToTensor, Resize, Normalize
 
 class HatefulMemes(data.Dataset):
@@ -36,9 +35,6 @@ class HatefulMemes(data.Dataset):
     ):
         self.data = pd.read_json(json_path, lines = True)
         self.data['img'] = img_folder_dir +  self.data['img']
-
-        # pretrained transformers to get text embeddings
-        self.text_model = sister.MeanEmbedding(lang="en")
 
 
 
@@ -66,8 +62,7 @@ class HatefulMemes(data.Dataset):
         
 
         # text
-        text = self.text_model(self.data.loc[index, 'text'])
-        text = torch.Tensor(text).squeeze()
+        text = self.data.loc[index, 'text'])
         
         # label (test set has labels for our project since challenge closed)
         label = self.data.loc[index, "label"]

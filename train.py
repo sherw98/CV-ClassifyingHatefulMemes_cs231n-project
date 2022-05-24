@@ -99,6 +99,7 @@ def main(args):
     log.info("Training...")
     steps_till_eval = args.eval_steps
     epoch = step // len(train_dataset)
+
     while epoch != args.num_epochs:
         epoch += 1
         log.info(f'Starting epoch {epoch}....')

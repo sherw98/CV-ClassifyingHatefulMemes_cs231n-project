@@ -8,14 +8,17 @@ dependencies:
   - fasttext
   - ujson
   - numpy
+  - huggingface
   - pandas
   - pip
   - sister
+  - sklearn
   - spacy=2.0.16
   - tensorboard
   - tensorflow
   - tensorboardX
   - tqdm
+  - transformers
   - torchvision
   - urllib3
   - pip:
