@@ -41,7 +41,6 @@ class Baseline_model(nn.Module):
         return x.view(N, -1)  # "flatten" the C * H * W values into a single vector per image
 
     def forward(self, image, text, device):
-        print(text)
         # concat 
         image = self.vision_pretrain(image)
         text = torch.tensor(self.text_model.encode(text)).squeeze().to(device)
