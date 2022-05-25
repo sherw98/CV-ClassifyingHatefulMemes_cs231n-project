@@ -89,7 +89,7 @@ class VisualBert_Model(nn.Module):
         image = self.vision_pretrain(image)
         visual_token_type_ids = torch.ones(image.shape[:-1], dtype=torch.long)
         visual_attention_mask = torch.ones(image.shape[:-1], dtype=torch.float)
-        
+        print(visual_attention_mask.shape)
         # tokenize and pad the text
         inputs = self.tokenizer(text, padding = True, return_tensors = "pt")
 
