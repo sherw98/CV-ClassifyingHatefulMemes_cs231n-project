@@ -13,7 +13,7 @@ import torch.utils.data as data
 import util
 
 from args import get_train_args
-from models import Baseline_model
+from models import Baseline_model, VisualBert_Model
 from util import HatefulMemes
 from collections import OrderedDict
 from sklearn import metrics
@@ -21,9 +21,12 @@ from tensorboardX import SummaryWriter
 from tqdm import tqdm
 from ujson import load as json_load
 from json import dumps
+import os
 
 
 def main(args):
+
+    os.environ["TOKENIZERS_PARALLELISM"] = "false"
     # set up logger and devices
     args.save_dir = util.get_save_dir(args.save_dir, args.name, training = True)
     log = util.get_logger(args.save_dir, args.name)
@@ -45,6 +48,8 @@ def main(args):
     log.info("Making model....")
     if(args.model_type == "baseline"):
         model = Baseline_model(hidden_size=args.hidden_size)
+    elif(args.model_type == "visualbert"):
+        model = VisualBert_Model(hidden_size=args.hidden_size)
     else:
         raise Exception("Model provided not valid")
 
@@ -115,6 +120,8 @@ def main(args):
 
                 if(args.model_type == "baseline"):
                     log_softmax_score = model(image, text, device)
+                elif(args.model_type == "visualbert"):
+                    log_softmax_score = model(image, text, device)
                 else:
                     raise Exception("Model Type Invalid")
 
@@ -182,6 +189,8 @@ def evaluate(args, model, data_loader, device):
             batch_size = args.batch_size
 
             if(args.model_type == "baseline"):
+                log_softmax_score = model(image, text, device)
+            elif(args.model_type == "visualbert"):
                 log_softmax_score = model(image, text, device)
             else:
                 raise Exception("Model Type Invalid")

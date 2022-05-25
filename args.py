@@ -54,7 +54,7 @@ def get_train_args():
     parser.add_argument('--model_type',
                         type=str,
                         default = "baseline",
-                        choices=('baseline'),
+                        choices=("baseline", "visualbert"),
                         help='Model choice for training')
 
     args = parser.parse_args()
