@@ -74,6 +74,7 @@ class VisualBert_Model(nn.Module):
         self.tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
         self.vision_pretrain = torchvision.models.resnet152(pretrained=True)
 
+        self.fc0 = nn.Linear(1000, 2048)
         self.fc1 = nn.Linear(1768, hidden_size)
         self.relu = nn.ReLU()
         self.fc2 = nn.Linear(hidden_size, 2)
@@ -86,7 +87,7 @@ class VisualBert_Model(nn.Module):
     def forward(self, image, text, device):
 
         # get visual embeddings 
-        image = self.vision_pretrain(image)
+        image = self.fc0(self.vision_pretrain(image))
         visual_token_type_ids = torch.ones(image.shape, dtype=torch.long).to(device)
         visual_attention_mask = torch.ones(image.shape, dtype=torch.float).to(device)
 

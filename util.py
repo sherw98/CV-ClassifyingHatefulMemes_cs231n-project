@@ -23,6 +23,18 @@ from collections import Counter
 import fasttext as ft
 from torchvision.transforms import Compose, ToTensor, Resize, Normalize
 
+from detectron2.modeling import build_model
+from detectron2.checkpoint import DetectionCheckpointer
+from detectron2.structures.image_list import ImageList
+from detectron2.data import transforms as T
+from detectron2.modeling.box_regression import Box2BoxTransform
+from detectron2.modeling.roi_heads.fast_rcnn import FastRCNNOutputLayers
+from detectron2.structures.boxes import Boxes
+from detectron2.layers import nms
+from detectron2 import model_zoo
+from detectron2.config import get_cfg
+
+
 class HatefulMemes(data.Dataset):
     """
     preprocess image and text data to multimodal tensors
@@ -255,6 +267,38 @@ class EMA:
                 assert name in self.shadow
                 param.data = self.original[name]
 
+# class RPN:
+#     """
+#     RPN for VisualBert and Fairface
+#     """
+#     def __init__(self, cfg_path =  "COCO-InstanceSegmentation/mask_rcnn_R_101_FPN_3x.yaml"):
+#         self.cfg_path = cfg_path
+    
+
+#     def get_embeds(self, images):
+#         # get config
+#         cfg = load_config_and_model_weights(self.cfg_path)
+
+#         # get model
+
+#         return
+
+#     def load_config_and_model_weights(self, cfg_path):
+#         cfg = get_cfg()
+#         cfg.merge_from_file(model_zoo.get_config_file(cfg_path))
+#         cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5
+#         cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(cfg_path)
+#         return cfg
+
+#     def get_model(self, cfg):
+#         model = build_model(cfg)
+
+#         checkpointer = DetectionCheckpointer(model)
+#         checkpointer.load(cfg.MODEL.WEIGHTS)
+
+#         # eval mode
+#         model.eval()
+#         return model
 
 def make_update_dict(img_ids, preds, scores, labels):
     pred_dict = {}
@@ -384,3 +428,5 @@ def get_logger(log_dir, name):
     logger.addHandler(console_handler)
 
     return logger
+
+
