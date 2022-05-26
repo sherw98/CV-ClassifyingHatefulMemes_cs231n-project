@@ -23,16 +23,16 @@ from collections import Counter
 import fasttext as ft
 from torchvision.transforms import Compose, ToTensor, Resize, Normalize
 
-from detectron2.modeling import build_model
-from detectron2.checkpoint import DetectionCheckpointer
-from detectron2.structures.image_list import ImageList
-from detectron2.data import transforms as T
-from detectron2.modeling.box_regression import Box2BoxTransform
-from detectron2.modeling.roi_heads.fast_rcnn import FastRCNNOutputLayers
-from detectron2.structures.boxes import Boxes
-from detectron2.layers import nms
-from detectron2 import model_zoo
-from detectron2.config import get_cfg
+# from detectron2.modeling import build_model
+# from detectron2.checkpoint import DetectionCheckpointer
+# from detectron2.structures.image_list import ImageList
+# from detectron2.data import transforms as T
+# from detectron2.modeling.box_regression import Box2BoxTransform
+# from detectron2.modeling.roi_heads.fast_rcnn import FastRCNNOutputLayers
+# from detectron2.structures.boxes import Boxes
+# from detectron2.layers import nms
+# from detectron2 import model_zoo
+# from detectron2.config import get_cfg
 
 
 class HatefulMemes(data.Dataset):
