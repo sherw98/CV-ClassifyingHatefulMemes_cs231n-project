@@ -90,8 +90,8 @@ class VisualBert_Model(nn.Module):
         print(image.shape)
         # get visual embeddings 
         image = self.fc0(self.vision_pretrain(image))
-        visual_token_type_ids = torch.ones((N,), dtype=torch.long).to(device)
-        visual_attention_mask = torch.ones((N,), dtype=torch.float).to(device)
+        visual_token_type_ids = torch.ones(image.shape, dtype=torch.long).to(device)
+        visual_attention_mask = torch.ones(image.shape, dtype=torch.float).to(device)
         print(visual_attention_mask.shape)
         # tokenize and pad the text
         inputs = self.tokenizer(text, padding = True, return_tensors = "pt").to(device)
