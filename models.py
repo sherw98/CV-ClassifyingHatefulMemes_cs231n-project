@@ -75,7 +75,7 @@ class VisualBert_Model(nn.Module):
         self.device = device,
         self.RPN = RPN(batch_size, device)
 
-        self.fc1 = nn.Linear(1768, hidden_size)
+        self.fc1 = nn.Linear(108288, hidden_size)
         self.relu = nn.ReLU()
         self.fc2 = nn.Linear(hidden_size, 2)
         self.dropout = nn.Dropout(drop_prob)
