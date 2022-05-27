@@ -112,7 +112,7 @@ class VisualBert_Model(nn.Module):
         last_hidden_state = self.flatten(last_hidden_state)
         print(last_hidden_state.shape)
         # forward through linear layers
-        fc1_out = torch.nn.functional.linear(last_hidden_state, (last_hidden_state.shape[1],self.hidden_size), bias = )
+        #fc1_out = torch.nn.functional.linear(last_hidden_state, (last_hidden_state.shape[1],self.hidden_size))
         fc1_out = self.dropout(fc1_out)
         relu_out = self.relu(fc1_out)
         fc2_out = self.fc2(relu_out)
