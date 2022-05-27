@@ -378,6 +378,7 @@ class RPN:
         # convert_to_tensor = lambda x: torch.Tensor(x.astype("float32"))
         batched_inputs = []
         for i in range(img_list.shape[0]):
+            print(img_list[i].shape)
             batch_input = {"image": (img_list[i]).transpose(2, 0, 1), "height": img.shape[0], "width": img.shape[1]}
             batched_inputs.append(batch_input)
 
