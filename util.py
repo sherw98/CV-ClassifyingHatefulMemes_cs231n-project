@@ -341,7 +341,7 @@ class RPN:
         proposals, _ = self.model.proposal_generator(images, fpn_features)
 
         # get the features and logits
-        box_features, features_list = self.get_box_features(self.model, fpn_featuresd, proposals)
+        box_features, features_list = self.get_box_features(self.model, fpn_features, proposals)
         pred_class_logits, pred_proposal_deltas = self.get_prediction_logits(self.model, features_list, proposals)
         
         # get boxes
