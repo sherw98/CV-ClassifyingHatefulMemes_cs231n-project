@@ -8,6 +8,7 @@ dependencies:
   - fasttext
   - ujson
   - numpy
+  - opencv-python
   - pandas
   - pip
   - spacy=2.0.16

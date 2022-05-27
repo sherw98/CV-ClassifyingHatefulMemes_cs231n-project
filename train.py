@@ -259,11 +259,6 @@ def evaluate(args, model, data_loader, device):
 
 
 
-
-    
-
-
-
     
 if __name__ == '__main__':
     main(get_train_args())
