@@ -321,7 +321,8 @@ class RPN:
     RPN for VisualBert and Fairface
     Adapted from the HuggingFace VisualBert tutorial
     """
-    def __init__(self, cfg_path =  "COCO-InstanceSegmentation/mask_rcnn_R_101_FPN_3x.yaml"):
+    def __init__(self, device, cfg_path =  "COCO-InstanceSegmentation/mask_rcnn_R_101_FPN_3x.yaml"):
+        self.device = device
         self.cfg_path = cfg_path
         # get config
         self.cfg = self.load_config_and_model_weights(self.cfg_path)
@@ -384,8 +385,8 @@ class RPN:
 
         # Normalizing the image
         num_channels = len(cfg.MODEL.PIXEL_MEAN)
-        pixel_mean = torch.Tensor(cfg.MODEL.PIXEL_MEAN).view(num_channels, 1, 1)
-        pixel_std = torch.Tensor(cfg.MODEL.PIXEL_STD).view(num_channels, 1, 1)
+        pixel_mean = torch.Tensor(cfg.MODEL.PIXEL_MEAN).view(num_channels, 1, 1).to(self.device)
+        pixel_std = torch.Tensor(cfg.MODEL.PIXEL_STD).view(num_channels, 1, 1).to(self.device)
         normalizer = lambda x: (x - pixel_mean) / pixel_std
         images = [normalizer(x["image"]) for x in batched_inputs]
 

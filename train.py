@@ -49,7 +49,7 @@ def main(args):
     if(args.model_type == "baseline"):
         model = Baseline_model(hidden_size=args.hidden_size)
     elif(args.model_type == "visualbert"):
-        model = VisualBert_Model(hidden_size=args.hidden_size)
+        model = VisualBert_Model(hidden_size=args.hidden_size, device)
     else:
         raise Exception("Model provided not valid")
 
