@@ -133,7 +133,6 @@ def main(args):
             tqdm(total=len(train_loader.dataset)) as progress_bar:
             for img_id, image, text, label in train_loader:
                 # forward pass here
-                print(image[0])
                 image = image.to(device)
                 # text = text.to(device)
 

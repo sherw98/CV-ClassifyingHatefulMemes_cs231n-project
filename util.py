@@ -121,9 +121,7 @@ class HatefulMemesRawImages(data.Dataset):
         
         image = plt.imread(self.data.loc[index, "img"])
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-        print(type(image))
         image=  cv2.resize(image, (224, 224))
-        print(type(image))
 
         # text
         text = self.data.loc[index, 'text']
@@ -369,16 +367,16 @@ class RPN:
         return cfg
 
     def prepare_image_inputs(self, cfg, img_list):
-        # Resizing the image according to the configuration
-        transform_gen = T.ResizeShortestEdge(
-                    [cfg.INPUT.MIN_SIZE_TEST, cfg.INPUT.MIN_SIZE_TEST], cfg.INPUT.MAX_SIZE_TEST
-                )
+        # # Resizing the image according to the configuration
+        # transform_gen = T.ResizeShortestEdge(
+        #             [cfg.INPUT.MIN_SIZE_TEST, cfg.INPUT.MIN_SIZE_TEST], cfg.INPUT.MAX_SIZE_TEST
+        #         )
 
-        print(img_list[0])
-        img_list = [transform_gen.get_transform(img).apply_image(img) for img in img_list]
+        # print(img_list[0])
+        # img_list = [transform_gen.get_transform(img).apply_image(img) for img in img_list]
 
-        # Convert to C,H,W format
-        convert_to_tensor = lambda x: torch.Tensor(x.astype("float32"))
+        # # Convert to C,H,W format
+        # convert_to_tensor = lambda x: torch.Tensor(x.astype("float32"))
 
         batched_inputs = [{"image": (img), "height": img.shape[0], "width": img.shape[1]} for img in img_list]
 
@@ -602,3 +600,42 @@ def get_logger(log_dir, name):
     return logger
 
 
+# def collate_fn(batch):
+#     r"""Puts each data field into a tensor with outer dimension batch size"""
+
+#     error_msg = "batch must contain tensors, numbers, dicts or lists; found {}"
+#     elem_type = type(batch[0])
+#     if isinstance(batch[0], torch.Tensor):
+#         out = None
+#         if _use_shared_memory:
+#             # If we're in a background process, concatenate directly into a
+#             # shared memory tensor to avoid an extra copy
+#             numel = sum([x.numel() for x in batch])
+#             storage = batch[0].storage()._new_shared(numel)
+#             out = batch[0].new(storage)
+#         return torch.stack(batch, 0, out=out)
+#     elif elem_type.__module__ == 'numpy' and elem_type.__name__ != 'str_' \
+#             and elem_type.__name__ != 'string_':
+#         elem = batch[0]
+#         if elem_type.__name__ == 'ndarray':
+#             # array of string classes and object
+#             if re.search('[SaUO]', elem.dtype.str) is not None:
+#                 raise TypeError(error_msg.format(elem.dtype))
+
+#             return torch.stack([torch.from_numpy(b) for b in batch], 0)
+#         if elem.shape == ():  # scalars
+#             py_type = float if elem.dtype.name.startswith('float') else int
+#             return numpy_type_map[elem.dtype.name](list(map(py_type, batch)))
+#     elif isinstance(batch[0], int_classes):
+#         return torch.LongTensor(batch)
+#     elif isinstance(batch[0], float):
+#         return torch.DoubleTensor(batch)
+#     elif isinstance(batch[0], string_classes):
+#         return batch
+#     elif isinstance(batch[0], container_abcs.Mapping):
+#         return {key: default_collate([d[key] for d in batch]) for key in batch[0]}
+#     elif isinstance(batch[0], container_abcs.Sequence):
+#         transposed = zip(*batch)
+#         return [default_collate(samples) for samples in transposed]
+
+#     raise TypeError((error_msg.format(type(batch[0]))))
