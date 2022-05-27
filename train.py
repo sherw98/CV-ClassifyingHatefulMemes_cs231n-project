@@ -14,7 +14,7 @@ import util
 
 from args import get_train_args
 from models import Baseline_model, VisualBert_Model
-from util import HatefulMemes
+from util import HatefulMemes, HatefulMemesRawImages
 from collections import OrderedDict
 from sklearn import metrics
 from tensorboardX import SummaryWriter
