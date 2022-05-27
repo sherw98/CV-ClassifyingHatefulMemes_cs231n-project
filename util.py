@@ -3,6 +3,7 @@ Utility classes and methods for Hateful Memes Classification
 """
 
 
+import cv2
 from copy import deepcopy
 import logging
 import os
@@ -18,6 +19,8 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 import ujson as json
+
+import matplotlib.pyplot as plt
 
 from collections import Counter
 
@@ -115,7 +118,9 @@ class HatefulMemesRawImages(data.Dataset):
         img_id = self.data.loc[index, "id"]
         
         # get image
-        image = Image.open(self.data.loc[index, "img"]).convert("BGR")
+        
+        image = plt.imread(self.data.loc[index, "img"])
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
         std_image = Compose(
             [
                 Resize(
