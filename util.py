@@ -115,8 +115,17 @@ class HatefulMemesRawImages(data.Dataset):
         img_id = self.data.loc[index, "id"]
         
         # get image
-        image = list(Image.open(self.data.loc[index, "img"]).convert("RGB"))
-
+        image = Image.open(self.data.loc[index, "img"]).convert("BGR")
+        std_image = Compose(
+            [
+                Resize(
+                    size=(224, 224)
+                ),        
+                ToTensor(),
+            ]
+        )
+        image = std_image(image)
+        
         # text
         text = self.data.loc[index, 'text']
         
@@ -361,16 +370,16 @@ class RPN:
         return cfg
 
     def prepare_image_inputs(self, cfg, img_list):
-        # Resizing the image according to the configuration
-        transform_gen = T.ResizeShortestEdge(
-                    [cfg.INPUT.MIN_SIZE_TEST, cfg.INPUT.MIN_SIZE_TEST], cfg.INPUT.MAX_SIZE_TEST
-                )
-        img_list = [transform_gen.get_transform(img).apply_image(img) for img in img_list]
+        # # Resizing the image according to the configuration
+        # transform_gen = T.ResizeShortestEdge(
+        #             [cfg.INPUT.MIN_SIZE_TEST, cfg.INPUT.MIN_SIZE_TEST], cfg.INPUT.MAX_SIZE_TEST
+        #         )
+        # img_list = [transform_gen.get_transform(img).apply_image(img) for img in img_list]
 
-        # Convert to C,H,W format
-        convert_to_tensor = lambda x: torch.Tensor(x.astype("float32"))
+        # # Convert to C,H,W format
+        # convert_to_tensor = lambda x: torch.Tensor(x.astype("float32"))
 
-        batched_inputs = [{"image":convert_to_tensor(img), "height": img.shape[0], "width": img.shape[1]} for img in img_list]
+        batched_inputs = [{"image": (img), "height": img.shape[0], "width": img.shape[1]} for img in img_list]
 
         # Normalizing the image
         num_channels = len(cfg.MODEL.PIXEL_MEAN)
