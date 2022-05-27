@@ -372,13 +372,14 @@ class RPN:
         #             [cfg.INPUT.MIN_SIZE_TEST, cfg.INPUT.MIN_SIZE_TEST], cfg.INPUT.MAX_SIZE_TEST
         #         )
 
-        # print(img_list[0])
         # img_list = [transform_gen.get_transform(img).apply_image(img) for img in img_list]
 
         # # Convert to C,H,W format
         # convert_to_tensor = lambda x: torch.Tensor(x.astype("float32"))
-
-        batched_inputs = [{"image": (img).transpose(2, 0, 1)), "height": img.shape[0], "width": img.shape[1]} for img in img_list]
+        batched_inputs = []
+        for i in range(img_list.shape[0]):
+            batch_input = {"image": (img_list[i]).transpose(2, 0, 1)), "height": img.shape[0], "width": img.shape[1]}
+            batched_inputs.append(batch_input)
 
         # Normalizing the image
         num_channels = len(cfg.MODEL.PIXEL_MEAN)
