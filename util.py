@@ -321,7 +321,7 @@ class RPN:
         self.cfg = self.load_config_and_model_weights(self.cfg_path)
 
         # get model
-        self.model = self.get_model(cfg)
+        self.model = self.get_model(self.cfg)
 
     def get_embeds(self, images):
 
