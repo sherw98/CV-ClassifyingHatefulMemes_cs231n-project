@@ -69,14 +69,15 @@ class VisualBert_Model(nn.Module):
     """
     def __init__(self, batch_size, hidden_size, device, drop_prob = 0.1):
         super(VisualBert_Model, self).__init__()
-        
+        self.device = device,
+        self.hidden = hidden_size,
+
         self.vbert_model = VisualBertModel.from_pretrained("uclanlp/visualbert-nlvr2-coco-pre")
         self.tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
-        self.device = device,
+
         self.RPN = RPN(batch_size, device)
 
-        self.fc1 = nn.Linear(108288, hidden_size)
-        self.relu = nn.ReLU()
+        self.relu = nn.LeakyReLU()
         self.fc2 = nn.Linear(hidden_size, 2)
         self.dropout = nn.Dropout(drop_prob)
 
@@ -90,6 +91,7 @@ class VisualBert_Model(nn.Module):
 
         # get visual embeddings
         image_embeds = torch.stack(self.RPN.get_embeds(image))
+        print(image_embeds.shape)
         visual_token_type_ids = torch.ones(image_embeds.shape[:-1], dtype=torch.long).to(device)
         visual_attention_mask = torch.ones(image_embeds.shape[:-1], dtype=torch.float).to(device)
 
@@ -105,10 +107,12 @@ class VisualBert_Model(nn.Module):
 
         # get last hidden of vbert
         outputs = self.vbert_model(**inputs)
-        last_hidden_state = self.flatten(outputs.last_hidden_state)
+
+        last_hidden_state = outputs.last_hidden_state
+        last_hidden_state = self.flatten(last_hidden_state)
         print(last_hidden_state.shape)
         # forward through linear layers
-        fc1_out = self.fc1(last_hidden_state)
+        fc1_out = torch.nn.functional.linear(last_hidden_state, (last_hidden_state.shape[1],self.hidden_size), bias = )
         fc1_out = self.dropout(fc1_out)
         relu_out = self.relu(fc1_out)
         fc2_out = self.fc2(relu_out)
