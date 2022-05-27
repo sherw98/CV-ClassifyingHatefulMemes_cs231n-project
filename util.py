@@ -115,13 +115,8 @@ class HatefulMemesRawImages(data.Dataset):
         img_id = self.data.loc[index, "id"]
         
         # get image
-        image = Image.open(self.data.loc[index, "img"]).convert("RGB")
-        std_image = Compose(
-            [     
-                ToTensor()
-            ]
-        )
-        image = std_image(image)
+        image = list(Image.open(self.data.loc[index, "img"]).convert("RGB"))
+
         # text
         text = self.data.loc[index, 'text']
         
