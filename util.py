@@ -333,30 +333,30 @@ class RPN:
         self.model = self.get_model(self.cfg)
 
     def get_embeds(self, images):
+        with torch.no_grad():
+            images, batched_inputs = self.prepare_image_inputs(self.cfg, images, self.model)
 
-        images, batched_inputs = self.prepare_image_inputs(self.cfg, images, self.model)
+            # use resnet to get features
+            fpn_features = self.model.backbone(images.tensor)
 
-        # use resnet to get features
-        fpn_features = self.model.backbone(images.tensor)
+            # generate proposal regions
+            proposals, _ = self.model.proposal_generator(images, fpn_features)
 
-        # generate proposal regions
-        proposals, _ = self.model.proposal_generator(images, fpn_features)
+            # get the features and logits
+            box_features, features_list = self.get_box_features(self.model, fpn_features, proposals)
+            pred_class_logits, pred_proposal_deltas = self.get_prediction_logits(self.model, features_list, proposals)
+            
+            # get boxes
+            boxes, scores, image_shapes = self.get_box_scores(self.cfg, pred_class_logits, pred_proposal_deltas, proposals)
+            output_boxes = [self.get_output_boxes(boxes[i], batched_inputs[i], proposals[i].image_size) for i in range(len(proposals))]
+            
+            temp = [self.select_boxes(self.cfg, output_boxes[i], scores[i]) for i in range(len(scores))]
+            keep_boxes, max_conf = [],[]
+            for keep_box, mx_conf in temp:
+                keep_boxes.append(keep_box)
+                max_conf.append(mx_conf)     
 
-        # get the features and logits
-        box_features, features_list = self.get_box_features(self.model, fpn_features, proposals)
-        pred_class_logits, pred_proposal_deltas = self.get_prediction_logits(self.model, features_list, proposals)
-        
-        # get boxes
-        boxes, scores, image_shapes = self.get_box_scores(self.cfg, pred_class_logits, pred_proposal_deltas, proposals)
-        output_boxes = [self.get_output_boxes(boxes[i], batched_inputs[i], proposals[i].image_size) for i in range(len(proposals))]
-        
-        temp = [self.select_boxes(self.cfg, output_boxes[i], scores[i]) for i in range(len(scores))]
-        keep_boxes, max_conf = [],[]
-        for keep_box, mx_conf in temp:
-            keep_boxes.append(keep_box)
-            max_conf.append(mx_conf)     
-
-        keep_boxes = [self.filter_boxes(keep_box, mx_conf) for keep_box, mx_conf in zip(keep_boxes, max_conf)]
+            keep_boxes = [self.filter_boxes(keep_box, mx_conf) for keep_box, mx_conf in zip(keep_boxes, max_conf)]
 
 
         visual_embeds = [box_feature[keep_box.detach()] for box_feature, keep_box in zip(box_features, keep_boxes)]
