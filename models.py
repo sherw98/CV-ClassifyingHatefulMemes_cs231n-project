@@ -96,7 +96,7 @@ class VisualBert_Model(nn.Module):
         visual_attention_mask = torch.ones(image_embeds.shape[:-1], dtype=torch.float).to(device)
 
         # tokenize and pad the text
-        inputs = self.tokenizer(text, padding = True, return_tensors = "pt").to(device)
+        inputs = self.tokenizer(text, padding='max_length', max_length=50, return_tensors = "pt").to(device)
         inputs.update(
             {
                 "visual_embeds": image_embeds,
