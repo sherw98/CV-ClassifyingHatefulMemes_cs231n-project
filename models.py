@@ -9,7 +9,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
 from transformers import BertTokenizer, VisualBertModel
-
+from util import RPN
 
 class Baseline_model(nn.Module):
     """
@@ -70,11 +70,10 @@ class VisualBert_Model(nn.Module):
     def __init__(self, hidden_size, drop_prob = 0.1):
         super(VisualBert_Model, self).__init__()
         
-        self.vbert_model = VisualBertModel.from_pretrained("uclanlp/visualbert-vqa-coco-pre")
+        self.vbert_model = VisualBertModel.from_pretrained("uclanlp/visualbert-nlvr2-coco-pre")
         self.tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
-        self.vision_pretrain = torchvision.models.resnet152(pretrained=True)
+        self.RPN = RPN()
 
-        self.fc0 = nn.Linear(1000, 2048)
         self.fc1 = nn.Linear(1768, hidden_size)
         self.relu = nn.ReLU()
         self.fc2 = nn.Linear(hidden_size, 2)
@@ -87,18 +86,17 @@ class VisualBert_Model(nn.Module):
     def forward(self, image, text, device):
 
         N, C, H, W = image.shape
-        print(image.shape)
-        # get visual embeddings 
-        image = self.fc0(self.vision_pretrain(image))
-        visual_token_type_ids = torch.ones(image.shape, dtype=torch.long).to(device)
-        visual_attention_mask = torch.ones(image.shape, dtype=torch.float).to(device)
-        print(visual_attention_mask.shape)
+
+        # get visual embeddings
+        image_embeds = torch.stack(self.RPN.get_embeds(image))
+        visual_token_type_ids = torch.ones(image_embeds.shape[:-1], dtype=torch.long).to(device)
+        visual_attention_mask = torch.ones(image_embeds.shape[:-1], dtype=torch.float).to(device)
+
         # tokenize and pad the text
         inputs = self.tokenizer(text, padding = True, return_tensors = "pt").to(device)
-        print(inputs['attention_mask'].shape)
         inputs.update(
             {
-                "visual_embeds": image,
+                "visual_embeds": image_embeds,
                 "visual_token_type_ids": visual_token_type_ids,
                 "visual_attention_mask": visual_attention_mask,
             }
@@ -106,8 +104,8 @@ class VisualBert_Model(nn.Module):
 
         # get last hidden of vbert
         outputs = self.vbert_model(**inputs)
-        last_hidden_state = outputs.last_hidden_state
-
+        last_hidden_state = self.flatten(outputs.last_hidden_state)
+        print(last_hidden_state.shape)
         # forward through linear layers
         fc1_out = self.fc1(last_hidden_state)
         fc1_out = self.dropout(fc1_out)

@@ -83,23 +83,44 @@ def main(args):
 
     # load in data
     log.info("Building dataset....")
-    train_dataset = HatefulMemes(args.train_eval_file,
+    if(args.model_type == "baseline"):
+        train_dataset = HatefulMemes(args.train_eval_file,
                                  args.img_folder_rel_path,
                                  args.text_model_path)
-    ###############
-    ################## might need to modify collate fn to allow for padding of text data
-    ###############
-    train_loader = data.DataLoader(train_dataset,
-                                   batch_size = args.batch_size,
-                                   shuffle = True,
-                                   num_workers = args.num_workers)
-    dev_dataset = HatefulMemes(args.dev_eval_file,
-                                args.img_folder_rel_path,
-                                args.text_model_path)                             
-    dev_loader = data.DataLoader(dev_dataset,
-                                   batch_size = args.batch_size,
-                                   shuffle = True,
-                                   num_workers = args.num_workers)
+        ###############
+        ################## might need to modify collate fn to allow for padding of text data
+        ###############
+        train_loader = data.DataLoader(train_dataset,
+                                    batch_size = args.batch_size,
+                                    shuffle = True,
+                                    num_workers = args.num_workers)
+        dev_dataset = HatefulMemes(args.dev_eval_file,
+                                    args.img_folder_rel_path,
+                                    args.text_model_path)                             
+        dev_loader = data.DataLoader(dev_dataset,
+                                    batch_size = args.batch_size,
+                                    shuffle = True,
+                                    num_workers = args.num_workers)
+    elif(args.model_type == "visualbert"):
+        train_dataset = HatefulMemesRawImages(args.train_eval_file,
+                                 args.img_folder_rel_path,
+                                 args.text_model_path)
+        ###############
+        ################## might need to modify collate fn to allow for padding of text data
+        ###############
+        train_loader = data.DataLoader(train_dataset,
+                                    batch_size = args.batch_size,
+                                    shuffle = True,
+                                    num_workers = args.num_workers)
+        dev_dataset = HatefulMemesRawImages(args.dev_eval_file,
+                                    args.img_folder_rel_path,
+                                    args.text_model_path)                             
+        dev_loader = data.DataLoader(dev_dataset,
+                                    batch_size = args.batch_size,
+                                    shuffle = True,
+                                    num_workers = args.num_workers)
+    else:
+        raise Exception("Model provided not valid")
     # Start training
     log.info("Training...")
     steps_till_eval = args.eval_steps
