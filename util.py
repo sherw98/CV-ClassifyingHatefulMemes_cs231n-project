@@ -470,9 +470,9 @@ class RPN:
     def filter_boxes(self, keep_boxes, max_conf, 
                     min_boxes= 10, max_boxes = 100):
         if len(keep_boxes) < min_boxes:
-            keep_boxes = np.argsort(max_conf).numpy()[::-1][:min_boxes]
+            keep_boxes = torch.argsort(max_conf)[::-1][:min_boxes]
         elif len(keep_boxes) > max_boxes:
-            keep_boxes = np.argsort(max_conf).numpy()[::-1][:max_boxes]
+            keep_boxes = torch.argsort(max_conf)[::-1][:max_boxes]
         return keep_boxes
 
 def make_update_dict(img_ids, preds, scores, labels):
