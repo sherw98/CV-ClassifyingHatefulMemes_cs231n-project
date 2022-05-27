@@ -371,6 +371,8 @@ class RPN:
         transform_gen = T.ResizeShortestEdge(
                     [cfg.INPUT.MIN_SIZE_TEST, cfg.INPUT.MIN_SIZE_TEST], cfg.INPUT.MAX_SIZE_TEST
                 )
+
+        print(img_list[0])
         img_list = [transform_gen.get_transform(img).apply_image(img) for img in img_list]
 
         # Convert to C,H,W format
