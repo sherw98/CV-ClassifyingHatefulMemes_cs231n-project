@@ -462,7 +462,7 @@ class RPN:
         for cls_ind in range(0, cls_prob.shape[1]-1):
             cls_scores = cls_prob[:, cls_ind+1]
             det_boxes = cls_boxes[:,cls_ind,:]
-            keep = np.array(nms(det_boxes, cls_scores, test_nms_thresh).cpu()).to(self.device)
+            keep = torch.Tensor(np.array(nms(det_boxes, cls_scores, test_nms_thresh).cpu())).to(self.device)
             max_conf[keep] = torch.where(cls_scores[keep] > max_conf[keep], cls_scores[keep], max_conf[keep])
         keep_boxes = torch.where(max_conf >= test_score_thresh)[0]
         return keep_boxes, max_conf
