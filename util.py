@@ -458,9 +458,9 @@ class RPN:
         test_nms_thresh = cfg.MODEL.ROI_HEADS.NMS_THRESH_TEST
         cls_prob = scores.detach()
         cls_boxes = output_boxes.tensor.detach().reshape(1000,80,4)
-        max_conf = torch.zeros((cls_boxes.shape[0]))
+        max_conf = torch.zeros((cls_boxes.shape[0])).to(self.device)
         for cls_ind in range(0, cls_prob.shape[1]-1):
-            cls_scores = cls_prob[:, cls_ind+1]
+            cls_scores = cls_prob[:, cls_ind+1].to(self.device)
             det_boxes = cls_boxes[:,cls_ind,:]
             keep = torch.Tensor(np.array(nms(det_boxes, cls_scores, test_nms_thresh).cpu())).to(torch.long).to(self.device)
             max_conf[keep] = torch.where(cls_scores[keep] > max_conf[keep], cls_scores[keep], max_conf[keep])
