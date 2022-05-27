@@ -334,6 +334,7 @@ class RPN:
 
     def get_embeds(self, images):
         with torch.no_grad():
+            N = images.shape[0]
             images, batched_inputs = self.prepare_image_inputs(self.cfg, images, self.model)
 
             # use resnet to get features
@@ -343,7 +344,7 @@ class RPN:
             proposals, _ = self.model.proposal_generator(images, fpn_features)
 
             # get the features and logits
-            box_features, features_list = self.get_box_features(self.model, fpn_features, proposals)
+            box_features, features_list = self.get_box_features(self.model, fpn_features, proposals, N)
             pred_class_logits, pred_proposal_deltas = self.get_prediction_logits(self.model, features_list, proposals)
             
             # get boxes
@@ -407,7 +408,7 @@ class RPN:
         model.eval()
         return model
 
-    def get_box_features(self, model, features, proposals):
+    def get_box_features(self, model, features, proposals, batch_size):
         features_list = [features[f] for f in ['p2', 'p3', 'p4', 'p5']]
         box_features = model.roi_heads.box_pooler(features_list, [x.proposal_boxes for x in proposals])
         box_features = model.roi_heads.box_head.flatten(box_features)
@@ -415,7 +416,7 @@ class RPN:
         box_features = model.roi_heads.box_head.fc_relu1(box_features)
         box_features = model.roi_heads.box_head.fc2(box_features)
 
-        box_features = box_features.reshape(self.batch_size, 1000, 1024) # depends on your config and batch size
+        box_features = box_features.reshape(batch_size, 1000, 1024) # depends on your config and batch size
         return box_features, features_list
 
     def get_prediction_logits(self, model, features_list, proposals):
