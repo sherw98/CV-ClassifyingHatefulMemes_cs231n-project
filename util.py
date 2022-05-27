@@ -359,7 +359,7 @@ class RPN:
         keep_boxes = [self.filter_boxes(keep_box, mx_conf) for keep_box, mx_conf in zip(keep_boxes, max_conf)]
 
 
-        visual_embeds = [box_feature[keep_box.copy()] for box_feature, keep_box in zip(box_features, keep_boxes)]
+        visual_embeds = [box_feature[keep_box.detach()] for box_feature, keep_box in zip(box_features, keep_boxes)]
         return visual_embeds
 
     def load_config_and_model_weights(self, cfg_path):
@@ -470,9 +470,9 @@ class RPN:
     def filter_boxes(self, keep_boxes, max_conf, 
                     min_boxes= 10, max_boxes = 100):
         if len(keep_boxes) < min_boxes:
-            keep_boxes = torch.argsort(max_conf, descending=False)[:min_boxes]
+            keep_boxes = torch.argsort(max_conf, descending=True)[:min_boxes]
         elif len(keep_boxes) > max_boxes:
-            keep_boxes = torch.argsort(max_conf, descending=False)[:max_boxes]
+            keep_boxes = torch.argsort(max_conf, descending=True)[:max_boxes]
         return keep_boxes
 
 def make_update_dict(img_ids, preds, scores, labels):
