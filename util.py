@@ -332,7 +332,7 @@ class RPN:
 
     def get_embeds(self, images):
 
-        images, batched_inputs = self.prepare_image_inputs(self.cfg, images)
+        images, batched_inputs = self.prepare_image_inputs(self.cfg, images, self.model)
 
         # use resnet to get features
         fpn_features = self.model.backbone(images.tensor)
@@ -367,7 +367,7 @@ class RPN:
         cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(cfg_path)
         return cfg
 
-    def prepare_image_inputs(self, cfg, img_list):
+    def prepare_image_inputs(self, cfg, img_list, model):
         # # Resizing the image according to the configuration
         # transform_gen = T.ResizeShortestEdge(
         #             [cfg.INPUT.MIN_SIZE_TEST, cfg.INPUT.MIN_SIZE_TEST], cfg.INPUT.MAX_SIZE_TEST
@@ -391,7 +391,7 @@ class RPN:
         images = [normalizer(x["image"]) for x in batched_inputs]
 
         # Convert to ImageList
-        images =  ImageList.from_tensors(images,model.backbone.size_divisibility)
+        images =  ImageList.from_tensors(images, model.backbone.size_divisibility)
         
         return images, batched_inputs
 
