@@ -121,15 +121,6 @@ class HatefulMemesRawImages(data.Dataset):
         
         image = plt.imread(self.data.loc[index, "img"])
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-        std_image = Compose(
-            [
-                Resize(
-                    size=(224, 224)
-                ),        
-                ToTensor(),
-            ]
-        )
-        image = std_image(image)
         
         # text
         text = self.data.loc[index, 'text']
