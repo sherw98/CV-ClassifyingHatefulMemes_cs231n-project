@@ -321,9 +321,11 @@ class RPN:
     RPN for VisualBert and Fairface
     Adapted from the HuggingFace VisualBert tutorial
     """
-    def __init__(self, device, cfg_path =  "COCO-InstanceSegmentation/mask_rcnn_R_101_FPN_3x.yaml"):
+    def __init__(self, batch_size, device, cfg_path =  "COCO-InstanceSegmentation/mask_rcnn_R_101_FPN_3x.yaml"):
         self.device = device
         self.cfg_path = cfg_path
+        self.batch_size = batch_size
+
         # get config
         self.cfg = self.load_config_and_model_weights(self.cfg_path)
 
@@ -413,7 +415,7 @@ class RPN:
         box_features = model.roi_heads.box_head.fc_relu1(box_features)
         box_features = model.roi_heads.box_head.fc2(box_features)
 
-        box_features = box_features.reshape(2, 1000, 1024) # depends on your config and batch size
+        box_features = box_features.reshape(self.batch_size, 200, 1024) # depends on your config and batch size
         return box_features, features_list
 
     def get_prediction_logits(self, model, features_list, proposals):

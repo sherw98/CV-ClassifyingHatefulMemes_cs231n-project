@@ -67,13 +67,13 @@ class VisualBert_Model(nn.Module):
         hidden_size,
         drop_prob
     """
-    def __init__(self, hidden_size, device, drop_prob = 0.1):
+    def __init__(self, batch_size, hidden_size, device, drop_prob = 0.1):
         super(VisualBert_Model, self).__init__()
         
         self.vbert_model = VisualBertModel.from_pretrained("uclanlp/visualbert-nlvr2-coco-pre")
         self.tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
         self.device = device,
-        self.RPN = RPN(device)
+        self.RPN = RPN(batch_size, device)
 
         self.fc1 = nn.Linear(1768, hidden_size)
         self.relu = nn.ReLU()
