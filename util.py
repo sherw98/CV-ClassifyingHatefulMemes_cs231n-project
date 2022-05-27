@@ -378,7 +378,7 @@ class RPN:
         # # Convert to C,H,W format
         # convert_to_tensor = lambda x: torch.Tensor(x.astype("float32"))
 
-        batched_inputs = [{"image": (img), "height": img.shape[0], "width": img.shape[1]} for img in img_list]
+        batched_inputs = [{"image": (img).transpose(2, 0, 1)), "height": img.shape[0], "width": img.shape[1]} for img in img_list]
 
         # Normalizing the image
         num_channels = len(cfg.MODEL.PIXEL_MEAN)
