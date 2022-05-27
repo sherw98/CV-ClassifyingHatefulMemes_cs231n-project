@@ -415,7 +415,7 @@ class RPN:
         box_features = model.roi_heads.box_head.fc_relu1(box_features)
         box_features = model.roi_heads.box_head.fc2(box_features)
 
-        box_features = box_features.reshape(self.batch_size, 200, 1024) # depends on your config and batch size
+        box_features = box_features.reshape(self.batch_size, 1000, 1024) # depends on your config and batch size
         return box_features, features_list
 
     def get_prediction_logits(self, model, features_list, proposals):
