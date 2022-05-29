@@ -116,5 +116,4 @@ class VisualBert_Model(nn.Module):
         relu_out = self.relu(fc1_out)
         fc2_out = self.fc2(relu_out)
         out = F.log_softmax(fc2_out, dim = -1)
-        print(out)
         return out

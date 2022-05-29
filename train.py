@@ -146,6 +146,11 @@ def main(args):
                 else:
                     raise Exception("Model Type Invalid")
 
+                # some prints to check preds    
+                softmax_score = log_softmax_score.exp()
+                _, preds = softmax_score.max(1)
+                print(preds)
+
                 # calc loss
                 label = label.to(device)
                 loss = F.nll_loss(log_softmax_score, label)
