@@ -78,11 +78,15 @@ class VisualBert_Model(nn.Module):
         self.RPN = RPN(batch_size, device)
         
         self.fc1 = nn.Linear(153600, hidden_size)
-        self.relu = nn.LeakyReLU()
-        self.fc2 = nn.Linear(hidden_size, 1)
-
+        self.relu1 = nn.LeakyReLU()
+        self.fc2 = nn.Linear(hidden_size, hidden_size)
+        self.relu2 = nn.LeakyReLU()
+        self.fc3 = nn.Linear(hidden_size, 1)
+        
         self.ln1 = nn.LayerNorm(hidden_size)
-        self.dropout = nn.Dropout(drop_prob)
+        self.ln2 = nn.LayerNorm(hidden_size)
+        self.dropout1 = nn.Dropout(drop_prob)
+        self.dropout2 = nn.Dropout(drop_prob)
 
     def flatten(self, x):
         N = x.shape[0] # read in N, C, H, W
@@ -115,7 +119,13 @@ class VisualBert_Model(nn.Module):
         # forward through linear layers
         fc1_out = self.fc1(last_hidden_state)
         fc1_out = self.ln1(fc1_out)
-        fc1_out = self.dropout(fc1_out)
-        relu_out = self.relu(fc1_out)
-        fc2_out = self.fc2(relu_out)
+        fc1_out = self.relu1(fc1_out)
+        fc1_out = self.dropout1(fc1_out)
+
+        fc2_out = self.fc2(fc1_out)
+        fc2_out = self.ln2(fc2_out)
+        fc2_out = self.relu2(fc2_out)
+        fc2_out = self.dropout2(fc2_out)
+
+        fc3_out = self.fc3(fc2_out)
         return fc2_out
