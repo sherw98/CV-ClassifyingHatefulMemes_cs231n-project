@@ -148,11 +148,8 @@ def main(args):
                 else:
                     raise Exception("Model Type Invalid")
 
-                # some prints to check preds    
-
-
                 # calc loss
-                label = label.to(device)
+                label = label.float().to(device)
                 preds, num_correct, acc = util.binary_acc(score, label.unsqueeze(1))
                 print(preds)
                 print(acc)
@@ -225,7 +222,7 @@ def evaluate(args, model, data_loader, device):
                 raise Exception("Model Type Invalid")
 
             # calc loss
-            label = label.to(device)
+            label = label.float().to(device)
             preds, num_correct, acc = util.binary_acc(score, label.unsqueeze(1))
             print(preds)
             print(acc)
