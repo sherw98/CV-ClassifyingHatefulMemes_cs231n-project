@@ -104,7 +104,8 @@ def main(args):
     elif(args.model_type == "visualbert"):
         train_dataset = HatefulMemesRawImages(args.train_eval_file,
                                  args.img_folder_rel_path,
-                                 args.text_model_path)
+                                 args.text_model_path,
+                                 balance = True)
         ###############
         ################## might need to modify collate fn to allow for padding of text data
         ###############
