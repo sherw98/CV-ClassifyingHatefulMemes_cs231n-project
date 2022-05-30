@@ -150,9 +150,6 @@ def main(args):
 
                 # calc loss
                 label = label.float().to(device)
-                preds, num_correct, acc = util.binary_acc(score, label.unsqueeze(1))
-                print(preds)
-                print(acc)
                 loss = criterion(score, label.unsqueeze(1))
                 loss_val = loss.item()
 
