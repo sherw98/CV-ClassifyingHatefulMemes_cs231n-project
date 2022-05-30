@@ -115,7 +115,8 @@ class HatefulMemesRawImages(data.Dataset):
             neg = self.data[self.data.label.eq(0)]
             pos = self.data[self.data.label.eq(1)]
             self.data = pd.concat([neg.sample(pos.shape[0]), pos])
-
+        self.data = self.data.reset_index(drop = True)
+        
         self.data['img'] = img_folder_dir +  self.data['img']
 
 
