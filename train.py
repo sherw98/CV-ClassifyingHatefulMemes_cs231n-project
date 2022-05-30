@@ -244,7 +244,7 @@ def evaluate(args, model, data_loader, device):
             # update 
             pred_dict.update(pred_dict_update)
 
-        acc = float(num_correct) / num_samples
+        acc = float(num_corrects) / num_samples
 
         # ROC
         y_score = np.asarray(full_score)
