@@ -153,6 +153,7 @@ def main(args):
 
                 # calc loss
                 label = label.to(device)
+                print((preds == label).sum()/preds.size(0))
                 loss = F.nll_loss(log_softmax_score, label)
                 loss_val = loss.item()
 
