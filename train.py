@@ -191,6 +191,7 @@ def main(args):
                         tbx.add_scalar(f'dev/{k}', v, step)
                     
 def evaluate(args, model, data_loader, device):
+    criterion = nn.BCEWithLogitsLoss()
     nll_meter = util.AverageMeter()
 
     model.eval()
