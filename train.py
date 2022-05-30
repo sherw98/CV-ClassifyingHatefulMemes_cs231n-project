@@ -75,7 +75,7 @@ def main(args):
                                  log = log)
     optimizer = optim.Adam(model.parameters(),
                             lr = args.lr,
-                            betas = (0.8, 0.999),
+                            betas = (0.9, 0.999),
                             eps = 1e-7,
                             weight_decay = args.l2_wd)
     criterion = nn.BCEWithLogitsLoss()
