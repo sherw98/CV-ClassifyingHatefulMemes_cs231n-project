@@ -116,7 +116,7 @@ class HatefulMemesRawImages(data.Dataset):
             pos = self.data[self.data.label.eq(1)]
             self.data = pd.concat([neg.sample(pos.shape[0]), pos])
         self.data = self.data.reset_index(drop = True)
-        
+
         self.data['img'] = img_folder_dir +  self.data['img']
 
 
@@ -614,6 +614,14 @@ def get_logger(log_dir, name):
 
     return logger
 
+def binary_acc(y_pred, y_test):
+    y_pred_tag = torch.round(torch.sigmoid(y_pred))
+
+    correct_results_sum = (y_pred_tag == y_test).sum().float()
+    acc = correct_results_sum/y_test.shape[0]
+    acc = torch.round(acc * 100)
+    
+    return y_pred_tag, correct_results_sum, acc
 
 # def collate_fn(batch):
 #     r"""Puts each data field into a tensor with outer dimension batch size"""

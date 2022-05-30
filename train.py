@@ -78,6 +78,7 @@ def main(args):
                             betas = (0.8, 0.999),
                             eps = 1e-7,
                             weight_decay = args.l2_wd)
+    criterion = nn.BCEWithLogitsLoss()
 
     scheduler = sched.LambdaLR(optimizer, lambda s: 1.)  # Constant LR
 
@@ -141,21 +142,21 @@ def main(args):
                 optimizer.zero_grad()
 
                 if(args.model_type == "baseline"):
-                    log_softmax_score = model(image, text, device)
+                    score = model(image, text, device)
                 elif(args.model_type == "visualbert"):
-                    log_softmax_score = model(image, text, device)
+                    score = model(image, text, device)
                 else:
                     raise Exception("Model Type Invalid")
 
                 # some prints to check preds    
-                softmax_score = log_softmax_score.exp()
-                _, preds = softmax_score.max(1)
-                print(preds)
+
 
                 # calc loss
                 label = label.to(device)
-                print((preds == label).sum()/preds.size(0))
-                loss = F.nll_loss(log_softmax_score, label)
+                preds, num_correct, acc = util.binary_acc(score, label.unsqueeze(1))
+                print(preds)
+                print(acc)
+                loss = criterion(score, label.unsqueeze(1))
                 loss_val = loss.item()
 
                 # backward pass here
@@ -205,7 +206,7 @@ def evaluate(args, model, data_loader, device):
 
 
     acc = 0
-    num_correct, num_samples = 0, 0
+    num_corrects, num_samples = 0, 0
     
     with torch.no_grad(), \
         tqdm(total=len(data_loader.dataset)) as progress_bar:
@@ -217,31 +218,32 @@ def evaluate(args, model, data_loader, device):
             batch_size = args.batch_size
 
             if(args.model_type == "baseline"):
-                log_softmax_score = model(image, text, device)
+                score = model(image, text, device)
             elif(args.model_type == "visualbert"):
-                log_softmax_score = model(image, text, device)
+                score = model(image, text, device)
             else:
                 raise Exception("Model Type Invalid")
 
             # calc loss
             label = label.to(device)
-            loss = F.nll_loss(log_softmax_score, label)
+            preds, num_correct, acc = util.binary_acc(score, label.unsqueeze(1))
+            print(preds)
+            print(acc)
+            loss = criterion(score, label.unsqueeze(1))
             nll_meter.update(loss.item(), batch_size)
 
             # get acc and auroc
-            softmax_score = log_softmax_score.exp()
-            _, preds = softmax_score.max(1)
-            num_correct += (preds == label).sum()
+            num_corrects += num_correct
             num_samples += preds.size(0)
 
             pred_dict_update = util.make_update_dict(
                 img_id,
                 preds,
-                softmax_score,
+                score,
                 label
             )
 
-            full_score.extend(softmax_score[:,1].tolist())
+            full_score.extend(torch.sigmoid(score).tolist())
             full_labels.extend(label)
 
             # update 

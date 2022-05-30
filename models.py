@@ -79,7 +79,7 @@ class VisualBert_Model(nn.Module):
         
         self.fc1 = nn.Linear(153600, hidden_size)
         self.relu = nn.LeakyReLU()
-        self.fc2 = nn.Linear(hidden_size, 2)
+        self.fc2 = nn.Linear(hidden_size, 1)
         self.dropout = nn.Dropout(drop_prob)
 
     def flatten(self, x):
@@ -115,5 +115,4 @@ class VisualBert_Model(nn.Module):
         fc1_out = self.dropout(fc1_out)
         relu_out = self.relu(fc1_out)
         fc2_out = self.fc2(relu_out)
-        out = F.log_softmax(fc2_out, dim = -1)
-        return out
+        return fc2_out
