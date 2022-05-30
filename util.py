@@ -47,9 +47,15 @@ class HatefulMemes(data.Dataset):
         self,
         json_path,
         img_folder_dir,
-        text_model_path
+        text_model_path,
+        balance=False,
     ):
         self.data = pd.read_json(json_path, lines = True)
+        if balance:
+            neg = self.data[self.data.label.eq(0)]
+            pos = self.data[self.data.label.eq(1)]
+            self.data = pd.concat([neg.sample(pos.shape[0]), pos])
+        self.data = self.data.reset_index(drop = True)
         self.data['img'] = img_folder_dir +  self.data['img']
 
 

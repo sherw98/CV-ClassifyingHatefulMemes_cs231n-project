@@ -87,7 +87,8 @@ def main(args):
     if(args.model_type == "baseline"):
         train_dataset = HatefulMemes(args.train_eval_file,
                                  args.img_folder_rel_path,
-                                 args.text_model_path)
+                                 args.text_model_path,
+                                 balance = True)
         ###############
         ################## might need to modify collate fn to allow for padding of text data
         ###############

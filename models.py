@@ -80,6 +80,8 @@ class VisualBert_Model(nn.Module):
         self.fc1 = nn.Linear(153600, hidden_size)
         self.relu = nn.LeakyReLU()
         self.fc2 = nn.Linear(hidden_size, 1)
+
+        self.ln1 = nn.LayerNorm(hidden_size)
         self.dropout = nn.Dropout(drop_prob)
 
     def flatten(self, x):
@@ -112,6 +114,7 @@ class VisualBert_Model(nn.Module):
         last_hidden_state = self.flatten(last_hidden_state)
         # forward through linear layers
         fc1_out = self.fc1(last_hidden_state)
+        fc1_out = self.ln1(fc1_out)
         fc1_out = self.dropout(fc1_out)
         relu_out = self.relu(fc1_out)
         fc2_out = self.fc2(relu_out)
