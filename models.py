@@ -128,4 +128,4 @@ class VisualBert_Model(nn.Module):
         fc2_out = self.dropout2(fc2_out)
 
         fc3_out = self.fc3(fc2_out)
-        return fc2_out
+        return fc3_out
