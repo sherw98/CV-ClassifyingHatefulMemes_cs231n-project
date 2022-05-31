@@ -46,7 +46,7 @@ def main(args):
     else:
         raise Exception("Model provided not valid")
 
-    model = nn.DataParallel(model, gpu_ids)
+    model = nn.DataParallel(model, args.gpu_ids)
     log.info(f'Loading checkpoint from {args.load_path}...')
 
     # get data loader
