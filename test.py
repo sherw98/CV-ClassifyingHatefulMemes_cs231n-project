@@ -12,7 +12,7 @@ import torch.optim.lr_scheduler as sched
 import torch.utils.data as data
 import util
 
-from args import get_train_args
+from args import get_test_args
 from models import Baseline_model, VisualBert_Model
 from util import HatefulMemes, HatefulMemesRawImages
 from collections import OrderedDict
