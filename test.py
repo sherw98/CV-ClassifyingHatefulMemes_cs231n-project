@@ -140,6 +140,8 @@ def main(args):
         sub_path = join(args.save_dir, args.split + '_' + args.sub_file)
         df.to_csv(sub_path, encoding = "utf-8")
 
+        print("Acc: {}, AUROC: {}".format(acc, auc))
+
 
 
 if __name__ == '__main__':
