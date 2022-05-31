@@ -10,8 +10,8 @@ def main(samples_frame_json):
 
     out = samples_frame['img_path']
 
-    out_path = join("./for_fairface", samples_frame_json, index = False)
-    out.to_csv(out_path, encoding = "utf-8")
+    out_path = join("./for_fairface", samples_frame_json)
+    out.to_csv(out_path, encoding = "utf-8", index = False)
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
