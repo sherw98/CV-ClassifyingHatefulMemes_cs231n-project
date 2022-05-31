@@ -72,7 +72,7 @@ def main(args):
     log.info(f"Evaluating on {args.split} split...")
     nll_meter = util.AverageMeter()
 
-    model = util.load_model(model, args.load_path, gpu_ids, return_step = False)
+    model = util.load_model(model, args.load_path, args.gpu_ids, return_step = False)
     model = model.to(device)
     model.eval()
 
