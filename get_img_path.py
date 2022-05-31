@@ -10,7 +10,7 @@ def main(samples_frame_json):
 
     out = samples_frame['img']
 
-    out_path = join("for_fairface", samples_frame_json)
+    out_path = join("./for_fairface", samples_frame_json)
     out.to_csv(out_path, encoding = "utf-8")
 
 if __name__ == '__main__':
