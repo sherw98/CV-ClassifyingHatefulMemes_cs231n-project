@@ -117,3 +117,37 @@ def add_train_test_args(parser):
                         type=str,
                         default=None,
                         help='Path to load as a model checkpoint.')
+
+def get_test_args():
+    """Get arguments needed in test.py."""
+    parser = argparse.ArgumentParser('Test a trained model on SQuAD')
+
+    add_common_args(parser)
+    add_train_test_args(parser)
+
+    parser.add_argument('--split',
+                        type=str,
+                        default='dev',
+                        choices=('train', 'dev', 'test'),
+                        help='Split to use for testing.')
+    parser.add_argument('--sub_file',
+                        type=str,
+                        default='submission.csv',
+                        help='Name for submission file.')
+    parser.add_argument('--model_type',
+                        type=str,
+                        default = "baseline",
+                        choices=('baseline', 'bidaf_char', 'QANet'),
+                        help='Model choice for training')
+    parser.add_argument('--ensemble_list',
+                        type=str,
+                        nargs = "+",
+                        help='Model best path tars for ensemble',
+                        default = [])
+
+    # Require load_path for test.py
+    args = parser.parse_args()
+    if not args.load_path and not args.ensemble_list:
+        raise argparse.ArgumentError('Missing required argument --load_path or --ensemble_list')
+
+    return args

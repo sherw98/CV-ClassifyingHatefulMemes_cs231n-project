@@ -114,8 +114,9 @@ class VisualBert_Model(nn.Module):
         # get last hidden of vbert
         outputs = self.vbert_model(**inputs)
 
-        last_hidden_state = outputs.last_hidden_state
+        last_hidden_state = outputs.last_hidden_state # Bn, 150, 768
         last_hidden_state = self.flatten(last_hidden_state)
+
         # forward through linear layers
         fc1_out = self.fc1(last_hidden_state)
         fc1_out = self.ln1(fc1_out)
