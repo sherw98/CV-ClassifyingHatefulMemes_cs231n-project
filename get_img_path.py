@@ -6,11 +6,11 @@ from os.path import join
 def main(samples_frame_json):
     samples_frame = pd.read_json(samples_frame_json, lines =True)
 
-    samples_frame['img'] = './hateful_memes/' + samples_frame['img']
+    samples_frame['img_path'] = './hateful_memes/' + samples_frame['img']
 
-    out = samples_frame['img']
+    out = samples_frame['img_path']
 
-    out_path = join("./for_fairface", samples_frame_json)
+    out_path = join("./for_fairface", samples_frame_json, index = False)
     out.to_csv(out_path, encoding = "utf-8")
 
 if __name__ == '__main__':
