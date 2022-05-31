@@ -22,7 +22,7 @@ from tqdm import tqdm
 from ujson import load as json_load
 from json import dumps
 import os
-
+from os.path import join
 
 def main(args):
     # Set up logging
@@ -85,7 +85,7 @@ def main(args):
     acc = 0
     num_corrects, num_samples = 0, 0
     criterion = nn.BCEWithLogitsLoss()
-    
+
     with torch.no_grad(), \
         tqdm(total=len(test_dataset)) as progress_bar:
         for img_id, image, text, label in test_loader:
