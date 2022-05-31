@@ -87,7 +87,7 @@ def main(args):
     
     with torch.no_grad(), \
         tqdm(total=len(test_dataset)) as progress_bar:
-        for img_id, image, text, label in test_dataset:
+        for img_id, image, text, label in test_loader:
             # forward pass here
             image = image.to(device)
             # text = text.to(device)
