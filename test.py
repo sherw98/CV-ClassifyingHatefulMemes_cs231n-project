@@ -84,6 +84,7 @@ def main(args):
 
     acc = 0
     num_corrects, num_samples = 0, 0
+    criterion = nn.BCEWithLogitsLoss()
     
     with torch.no_grad(), \
         tqdm(total=len(test_dataset)) as progress_bar:
