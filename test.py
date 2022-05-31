@@ -141,3 +141,5 @@ def main(args):
 
 
 
+if __name__ == '__main__':
+    main(get_test_args())
