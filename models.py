@@ -52,11 +52,12 @@ class Baseline_model(nn.Module):
 
         # forward through linear layers
         fc1_out = self.fc1(combined_feat)
+        fc1_out = self.relu(fc1_out)        
         fc1_out = self.dropout(fc1_out)
-        relu_out = self.relu(fc1_out)
-        fc2_out = self.fc2(relu_out)
+        
+        fc2_out = self.fc2(fc1_out)
 
-        return F.log_softmax(fc2_out, dim = -1)
+        return fc2_out
 
 
 class VisualBert_Model(nn.Module):
