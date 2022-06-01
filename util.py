@@ -376,6 +376,9 @@ class RPN:
 
 
         visual_embeds = [box_feature[keep_box.detach()] for box_feature, keep_box in zip(box_features, keep_boxes)]
+        for box in visual_embeds:
+            box.requires_grad = True
+            
         return visual_embeds
 
     def load_config_and_model_weights(self, cfg_path):
