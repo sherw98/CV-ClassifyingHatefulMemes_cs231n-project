@@ -33,7 +33,7 @@ class Baseline_model(nn.Module):
 
         self.fc1 = nn.Linear(1768, hidden_size)
         self.relu = nn.ReLU()
-        self.fc2 = nn.Linear(hidden_size, 2)
+        self.fc2 = nn.Linear(hidden_size, 1)
         self.dropout = nn.Dropout(drop_prob)
 
 
