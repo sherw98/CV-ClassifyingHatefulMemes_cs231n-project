@@ -43,6 +43,8 @@ def main(args):
         model = Baseline_model(hidden_size=args.hidden_size)
     elif(args.model_type == "visualbert"):
         model = VisualBert_Model(args.batch_size, args.hidden_size, device)
+    elif(args.model_type == "visualbert_fairface"):
+        model = VisualBert_Model_Fairface(args.batch_size, args.hidden_size, device)
     else:
         raise Exception("Model provided not valid")
 
@@ -60,6 +62,14 @@ def main(args):
                                     num_workers = args.num_workers)
     elif(args.model_type == "visualbert"):
         test_dataset = HatefulMemesRawImages(args.test_eval_file,
+                                    args.img_folder_rel_path,
+                                    args.text_model_path)                             
+        test_loader = data.DataLoader(test_dataset,
+                                    batch_size = args.batch_size,
+                                    shuffle = True,
+                                    num_workers = args.num_workers)
+    elif(args.model_type == "visualbert_fairface"):
+        test_dataset = HatefulMemesRawImagesAdditionalFeat(args.test_eval_file,
                                     args.img_folder_rel_path,
                                     args.text_model_path)                             
         test_loader = data.DataLoader(test_dataset,
@@ -88,7 +98,7 @@ def main(args):
 
     with torch.no_grad(), \
         tqdm(total=len(test_dataset)) as progress_bar:
-        for img_id, image, text, label in test_loader:
+        for img_id, image, text, label, add_feat in test_loader:
             # forward pass here
             image = image.to(device)
             # text = text.to(device)
@@ -99,6 +109,8 @@ def main(args):
                 score = model(image, text, device)
             elif(args.model_type == "visualbert"):
                 score = model(image, text, device)
+            elif(args.model_type == "visualbert_fairface"):
+                score = model(image, text, add_feat, device)
             else:
                 raise Exception("Model Type Invalid")
 
