@@ -171,7 +171,7 @@ class VisualBert_Model_Fairface(nn.Module):
         N, C, H, W = image.shape
 
         add_feat = add_feat.float()
-        
+
         # get visual embeddings
         image_embeds = torch.stack(self.RPN.get_embeds(image))
         visual_token_type_ids = torch.ones(image_embeds.shape[:-1], dtype=torch.long).to(device)
@@ -191,8 +191,6 @@ class VisualBert_Model_Fairface(nn.Module):
         outputs = self.vbert_model(**inputs)
 
         last_hidden_state = outputs.last_hidden_state # Bn, 150, 768
-        print(last_hidden_state.shape)
-        print(add_feat.shape)
         last_hidden_state = self.flatten(last_hidden_state)
         last_hidden_state = torch.cat((last_hidden_state, add_feat), dim = 1)
 
