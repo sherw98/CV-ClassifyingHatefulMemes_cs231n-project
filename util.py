@@ -82,6 +82,7 @@ class HatefulMemes(data.Dataset):
         )
         image = std_image(image)
         
+        add_feat = 0
 
         # text
         text = self.data.loc[index, 'text']
@@ -93,7 +94,8 @@ class HatefulMemes(data.Dataset):
             img_id,
             image,
             text,
-            label
+            label,
+            add_feat
         )
 
         return example
@@ -144,11 +146,74 @@ class HatefulMemesRawImages(data.Dataset):
         # label (test set has labels for our project since challenge closed)
         label = self.data.loc[index, "label"]
 
+        add_feat = 0
+
         example = (
             img_id,
             image,
             text,
-            label
+            label,
+            add_feat
+        )
+
+        return example
+
+
+    def __len__(self):
+
+        return len(self.data)
+
+
+class HatefulMemesRawImagesAdditionalFeat(data.Dataset):
+    """
+    preprocess image and text data to multimodal tensors
+    """
+    def __init__(
+        self,
+        json_path,
+        img_folder_dir,
+        text_model_path,
+        balance=False
+    ):
+        self.data = pd.read_json(json_path, lines = True)
+        
+        # balance the dataset
+        if balance:
+            neg = self.data[self.data.label.eq(0)]
+            pos = self.data[self.data.label.eq(1)]
+            self.data = pd.concat([neg.sample(pos.shape[0]), pos])
+        self.data = self.data.reset_index(drop = True)
+
+        self.data['img'] = img_folder_dir +  self.data['img']
+
+
+
+    def __getitem__(self, index):
+
+        # get id
+        img_id = self.data.loc[index, "id"]
+        
+        # get image
+        
+        image = plt.imread(self.data.loc[index, "img"])
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        image=  cv2.resize(image, (224, 224))
+
+        # text
+        text = self.data.loc[index, 'text']
+        
+        # label (test set has labels for our project since challenge closed)
+        label = self.data.loc[index, "label"]
+
+        add_feat = np.zeros(1,2)
+        add_feat[0,0] = self.data.loc[index, "minority_flag"]
+        add_feat[0,1] = self.data.loc[index, "gender_flag"]
+        example = (
+            img_id,
+            image,
+            text,
+            label,
+            add_feat
         )
 
         return example
@@ -378,7 +443,7 @@ class RPN:
         visual_embeds = [box_feature[keep_box.detach()] for box_feature, keep_box in zip(box_features, keep_boxes)]
         for box in visual_embeds:
             box.requires_grad = True
-            
+
         return visual_embeds
 
     def load_config_and_model_weights(self, cfg_path):

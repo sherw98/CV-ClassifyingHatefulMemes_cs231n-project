@@ -14,7 +14,7 @@ import util
 
 from args import get_train_args
 from models import Baseline_model, VisualBert_Model
-from util import HatefulMemes, HatefulMemesRawImages
+from util import HatefulMemes, HatefulMemesRawImages, HatefulMemesRawImagesAdditionalFeat
 from collections import OrderedDict
 from sklearn import metrics
 from tensorboardX import SummaryWriter
@@ -122,6 +122,25 @@ def main(args):
                                     batch_size = args.batch_size,
                                     shuffle = True,
                                     num_workers = args.num_workers)
+    elif(args.model_type == "visualbert_fairface"):
+        train_dataset = HatefulMemesRawImagesAdditionalFeat(args.train_eval_file,
+                                 args.img_folder_rel_path,
+                                 args.text_model_path,
+                                 balance = True)
+        ###############
+        ################## might need to modify collate fn to allow for padding of text data
+        ###############
+        train_loader = data.DataLoader(train_dataset,
+                                    batch_size = args.batch_size,
+                                    shuffle = True,
+                                    num_workers = args.num_workers)
+        dev_dataset = HatefulMemesRawImagesAdditionalFeat(args.dev_eval_file,
+                                    args.img_folder_rel_path,
+                                    args.text_model_path)                             
+        dev_loader = data.DataLoader(dev_dataset,
+                                    batch_size = args.batch_size,
+                                    shuffle = True,
+                                    num_workers = args.num_workers)
     else:
         raise Exception("Model provided not valid")
     # Start training
@@ -134,7 +153,7 @@ def main(args):
         log.info(f'Starting epoch {epoch}....')
         with torch.enable_grad(), \
             tqdm(total=len(train_loader.dataset)) as progress_bar:
-            for img_id, image, text, label in train_loader:
+            for img_id, image, text, label, add_feat in train_loader:
                 # forward pass here
                 image = image.to(device)
                 # text = text.to(device)
@@ -146,6 +165,8 @@ def main(args):
                     score = model(image, text, device)
                 elif(args.model_type == "visualbert"):
                     score = model(image, text, device)
+                elif(args.model_type == "visualbert_fairface"):
+                    score = model(image, text, add_feat, device)
                 else:
                     raise Exception("Model Type Invalid")
 
@@ -206,7 +227,7 @@ def evaluate(args, model, data_loader, device):
     
     with torch.no_grad(), \
         tqdm(total=len(data_loader.dataset)) as progress_bar:
-        for img_id, image, text, label in data_loader:
+        for img_id, image, text, label, add_feat in data_loader:
             # forward pass here
             image = image.to(device)
             # text = text.to(device)
