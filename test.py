@@ -13,8 +13,8 @@ import torch.utils.data as data
 import util
 
 from args import get_test_args
-from models import Baseline_model, VisualBert_Model
-from util import HatefulMemes, HatefulMemesRawImages
+from models import Baseline_model, VisualBert_Model, VisualBert_Model_Fairface
+from util import HatefulMemes, HatefulMemesRawImages, HatefulMemesRawImagesAdditionalFeat
 from collections import OrderedDict
 from sklearn import metrics
 from tensorboardX import SummaryWriter
