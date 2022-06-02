@@ -13,7 +13,7 @@ import torch.utils.data as data
 import util
 
 from args import get_train_args
-from models import Baseline_model, VisualBert_Model
+from models import Baseline_model, VisualBert_Model, VisualBert_Model_Fairface
 from util import HatefulMemes, HatefulMemesRawImages, HatefulMemesRawImagesAdditionalFeat
 from collections import OrderedDict
 from sklearn import metrics
@@ -50,6 +50,8 @@ def main(args):
         model = Baseline_model(hidden_size=args.hidden_size)
     elif(args.model_type == "visualbert"):
         model = VisualBert_Model(args.batch_size, args.hidden_size, device)
+    elif(args.model_type == "visualbert_fairface"):
+        model = VisualBert_Model_Fairface(args.batch_size, args.hidden_size, device)
     else:
         raise Exception("Model provided not valid")
 
@@ -238,6 +240,8 @@ def evaluate(args, model, data_loader, device):
                 score = model(image, text, device)
             elif(args.model_type == "visualbert"):
                 score = model(image, text, device)
+            elif(args.model_type == "visualbert_fairface"):
+                score = model(image, text, add_feat, device)
             else:
                 raise Exception("Model Type Invalid")
 
