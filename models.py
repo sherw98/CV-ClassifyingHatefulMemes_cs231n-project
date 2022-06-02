@@ -151,7 +151,7 @@ class VisualBert_Model_Fairface(nn.Module):
 
         self.RPN = RPN(batch_size, device)
         
-        self.fc1 = nn.Linear(153600, hidden_size)
+        self.fc1 = nn.Linear(153602, hidden_size)
         self.relu1 = nn.LeakyReLU()
         self.fc2 = nn.Linear(hidden_size, hidden_size)
         self.relu2 = nn.LeakyReLU()
@@ -192,7 +192,7 @@ class VisualBert_Model_Fairface(nn.Module):
         print(last_hidden_state.shape)
         print(add_feat.shape)
         last_hidden_state = self.flatten(last_hidden_state)
-        last_hidden_state = torch.concat((last_hidden_state, add_feat), dim = 1)
+        last_hidden_state = torch.cat((last_hidden_state, add_feat), dim = 1)
 
         # forward through linear layers
         fc1_out = self.fc1(last_hidden_state)
