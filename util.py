@@ -205,7 +205,7 @@ class HatefulMemesRawImagesAdditionalFeat(data.Dataset):
         # label (test set has labels for our project since challenge closed)
         label = self.data.loc[index, "label"]
 
-        add_feat = np.zeros(1,2)
+        add_feat = np.zeros((1,2))
         add_feat[0,0] = self.data.loc[index, "minority_flag"]
         add_feat[0,1] = self.data.loc[index, "gender_flag"]
         example = (
