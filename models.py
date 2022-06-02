@@ -142,7 +142,7 @@ class VisualBert_Model_Fairface(nn.Module):
         drop_prob
     """
     def __init__(self, batch_size, hidden_size, device, drop_prob = 0.1):
-        super(VisualBert_Model, self).__init__()
+        super(VisualBert_Model_Fairface, self).__init__()
         self.device = device,
         self.hidden = hidden_size,
 
