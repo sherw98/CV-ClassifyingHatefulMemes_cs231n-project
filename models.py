@@ -170,6 +170,8 @@ class VisualBert_Model_Fairface(nn.Module):
 
         N, C, H, W = image.shape
 
+        add_feat = add_feat.float()
+        
         # get visual embeddings
         image_embeds = torch.stack(self.RPN.get_embeds(image))
         visual_token_type_ids = torch.ones(image_embeds.shape[:-1], dtype=torch.long).to(device)
