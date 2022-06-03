@@ -1,0 +1,107 @@
+---
+title: "cs231n_proj_plotting"
+author: "Alex Fan"
+date: "May 7, 2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r}
+setwd("C:/Users/fanaf/Desktop/Stanford/Q3/cs231n/cs231n_project/")
+library(tidyverse)
+
+```
+
+
+### comparisons
+```{r}
+baseline_acc = read_csv("./plots/for_comparison/run-train_baseline_new-05-tag-dev_Acc.csv")
+baseline_auroc = read.csv("./plots/for_comparison/run-train_baseline_new-05-tag-dev_AUROC.csv")
+colnames(baseline_acc) = c("baseline_time", "baseline_step", 'baseline_acc')
+colnames(baseline_auroc) = c("baseline_time", "baseline_step", 'baseline_auroc')
+
+visualbert_acc = read_csv("./plots/for_comparison/run-train_visualbert_test-04-tag-dev_Acc.csv")
+visualbert_auroc = read.csv("./plots/for_comparison/run-train_visualbert_test-04-tag-dev_AUROC.csv")
+colnames(visualbert_acc) = c("visualbert_time", "visualbert_step", 'visualbert_acc')
+colnames(visualbert_auroc) = c("visualbert_time", "visualbert_step", 'visualbert_auroc')
+
+visualbert_fairface_acc = read_csv("./plots/for_comparison/run-train_visualbert_fairface_test-07-tag-dev_Acc.csv")
+visualbert_fairface_auroc = read.csv("./plots/for_comparison/run-train_visualbert_fairface_test-07-tag-dev_AUROC.csv")
+colnames(visualbert_fairface_acc) = c("visualbert_fairface_time", "visualbert_fairface_step", 'visualbert_fairface_acc')
+colnames(visualbert_fairface_auroc) = c("visualbert_fairface_time", "visualbert_fairface_step", 'visualbert_fairface_auroc')
+```
+
+```{r}
+colors <- c("visualbert" = "blue", "baseline" = "red", "visualbert_fairface" = "purple")
+joined_acc = cbind(baseline_acc, visualbert_acc, visualbert_fairface_acc)
+
+png('./plots/for_comparison/comparison_acc_plot.png', width = 720, height = 480)
+joined_acc %>%
+  ggplot(aes(x = baseline_step)) +
+  geom_point(aes(y = baseline_acc, color = "baseline")) + 
+  geom_smooth(aes(y = baseline_acc, color = "baseline"), se = F) +
+  geom_point(aes(y = visualbert_acc, color = "visualbert")) + 
+  geom_smooth(aes(y = visualbert_acc, color = "visualbert"), se = F) +
+  geom_point(aes(y= visualbert_fairface_acc, color = "visualbert_fairface")) + 
+  geom_smooth(aes(y = visualbert_fairface_acc, color = "visualbert_fairface"), se = F) + 
+  theme_bw() +
+  xlab("Steps") + ylab("Accuracy") + 
+  scale_color_manual(values = colors)
+dev.off()
+```
+
+
+```{r}
+colors <- c("visualbert" = "blue", "baseline" = "red", "visualbert_fairface" = "purple")
+joined_auroc = cbind(baseline_auroc, visualbert_auroc, visualbert_fairface_auroc)
+
+png('./plots/for_comparison/comparison_auroc_plot.png', width = 720, height = 480)
+joined_auroc %>%
+  ggplot(aes(x = baseline_step)) +
+  geom_point(aes(y = baseline_auroc, color = "baseline")) + 
+  geom_smooth(aes(y = baseline_auroc, color = "baseline"), se = F) +
+  geom_point(aes(y = visualbert_auroc, color = "visualbert")) + 
+  geom_smooth(aes(y = visualbert_auroc, color = "visualbert"), se = F) +
+  geom_point(aes(y= visualbert_fairface_auroc, color = "visualbert_fairface")) + 
+  geom_smooth(aes(y = visualbert_fairface_auroc, color = "visualbert_fairface"), se = F) + 
+  theme_bw() +
+  xlab("Steps") + ylab("AUROC") + 
+  scale_color_manual(values = colors)
+dev.off()
+```
+
+```{r}
+
+
+png('./plots/baseline/baseline_acc_plot.png', width = 720, height = 480)
+colors <- c("baseline" = "blue")
+acc_data %>%
+  ggplot(aes(x = Step)) +
+  geom_point(aes(y = Value, color = "baseline")) +
+  geom_smooth(aes(y = Value, color = "baseline"), se = FALSE) +
+  xlab("Step") + ylab("Acc") +
+  theme_bw()+
+  scale_color_manual(values = colors)
+dev.off()
+```
+
+
+
+```{r}
+png('./plots/baseline/baseline_auroc_plot.png', width = 720, height = 480)
+colors <- c("baseline" = "blue")
+auroc_data %>%
+  ggplot(aes(x = Step)) +
+  geom_point(aes(y = Value, color = "baseline")) +
+  geom_smooth(aes(y = Value, color = "baseline"), se = FALSE) +
+  xlab("Step") + ylab("AUROC") +
+  theme_bw()+
+  scale_color_manual(values = colors)
+dev.off()
+```
+
